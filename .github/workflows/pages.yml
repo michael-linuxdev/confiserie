@@ -1,0 +1,39 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build site
+        run: |
+          mkdir _site
+          cp -r index.html manifest.webmanifest sw.js fonts icons CNAME .nojekyll _site/
+          # Cache-Version des Service Workers = Commit-Hash, damit jeder Deploy als neue Version erkannt wird
+          sed -i "s/^const VERSION = 'dev';/const VERSION = '${GITHUB_SHA::8}';/" _site/sw.js
+          grep -q "const VERSION = '${GITHUB_SHA::8}';" _site/sw.js
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
