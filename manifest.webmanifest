@@ -1,7 +1,7 @@
 {
-  "name": "Confiserie Sommer",
-  "short_name": "Confiserie",
-  "description": "Pralinen über Weichen in die passende Schachtel lenken – ein Echtzeit-Puzzle.",
+  "name": "Truffle Box",
+  "short_name": "Truffle Box",
+  "description": "Pralinen in die Schachtel legen, Reihen verpacken, Bestellungen ausliefern.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

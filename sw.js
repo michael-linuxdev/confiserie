@@ -1,4 +1,4 @@
-// Service Worker – Confiserie Sommer
+// Service Worker – Truffle Box
 // Cache-first für alle App-Dateien. VERSION wird beim Deploy (GitHub Actions)
 // durch den Commit-Hash ersetzt; jede Auslieferung bekommt so einen neuen Cache.
 // Bei manuellem Hosting: VERSION bei jeder Änderung an den App-Dateien erhöhen.
