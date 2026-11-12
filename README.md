@@ -31,6 +31,18 @@ Dann http://localhost:8080 öffnen. Der Service Worker wird nur unter `https:` b
 
 Weil der Service Worker cache-first arbeitet, siehst du Änderungen lokal erst, wenn du in `sw.js` die `VERSION` änderst (danach erscheint im Spiel „Neue Version – tippen zum Aktualisieren“) oder in den DevTools unter *Application → Service Workers* „Update on reload“ aktivierst.
 
+## Schwierigkeit / Balancing
+
+Jedes Level hat ein Zuglimit (`MOVES` in `index.html`). Sterne gibt es für übrig gebliebene Züge, zwei Reihen auf einmal schenken einen Zug, und pro Level gibt es nur eine Rettung. Die Limits stammen aus Bot-Simulationen mit der echten Spiellogik:
+
+```sh
+npm i -D playwright          # einmalig
+node tools/balance.cjs          # Tabelle + Vorschlag für MOVES
+node tools/balance.cjs --check  # Gewinnquoten mit den eingetragenen MOVES
+```
+
+Wer `params()` ändert (Sorten, Bestellmengen, Schokobruch, Teile), sollte danach `MOVES` neu erzeugen. Leichter oder schwerer wird das ganze Spiel über `target(n)` im Skript.
+
 ## Icons neu erzeugen
 
 ```sh

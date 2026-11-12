@@ -56,11 +56,17 @@ p{margin:6px 0;line-height:1.45}
 /* Spiel */
 #hud{display:flex;gap:8px;align-items:center;margin:0 0 8px}
 .rb{flex:0 0 auto;border:0;font-weight:900;font-size:18px;background:var(--card);border-radius:999px;min-width:44px;height:44px;box-shadow:0 2px 0 var(--line);padding:0 10px}
-#order{flex:1;background:var(--card);border-radius:18px;box-shadow:0 2px 0 var(--line);padding:6px 10px;display:flex;align-items:center;gap:8px}
+#order{flex:1;min-width:0;background:var(--card);border-radius:18px;box-shadow:0 2px 0 var(--line);padding:6px 10px;display:flex;align-items:center;gap:8px}
 .av{width:38px;height:38px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px}
 .oinfo{flex:1;min-width:0}
 .oname{font-size:12px;color:var(--mut);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #goals{display:flex;gap:10px}
+#order.g3 .av{display:none}#order.g3 #goals{gap:6px}#order.g3 .gl{font-size:17px}
+#mv{flex:0 0 auto;min-width:46px;text-align:center;line-height:1;border-left:2px solid var(--line);padding-left:8px}
+#mv b{display:block;font-size:26px;font-weight:900}
+#mv small{font-size:11px;color:var(--mut);font-weight:800}
+#mv.low b{color:var(--rose);animation:pop .7s infinite}
+#mv.bump b{animation:pop .4s}
 .gl{display:flex;align-items:center;gap:3px;font-size:19px;font-weight:900}
 .gl.done{color:var(--ok)}
 .gl.bump{animation:pop .3s}
@@ -219,24 +225,32 @@ const SH=[[[0,0]],[[0,0],[0,1]],[[0,0],[1,0]],[[0,0],[0,1],[0,2]],[[0,0],[1,0],[
  [[0,0],[0,1],[0,2],[0,3]],[[0,0],[1,0],[2,0],[3,0]],[[0,0],[1,0],[2,0],[2,1]],[[0,0],[0,1],[0,2],[1,0]],[[0,0],[0,1],[1,1],[2,1]],[[0,2],[1,0],[1,1],[1,2]],
  [[0,0],[0,1],[0,2],[1,1]],[[0,1],[1,0],[1,1],[2,1]],[[0,1],[0,2],[1,0],[1,1]],[[0,0],[0,1],[1,1],[1,2]],
  [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]],[[0,0],[0,1],[0,2],[0,3],[0,4]],[[0,0],[1,0],[2,0],[3,0],[4,0]]];
-function params(n){return{types:n<=2?2:n<=5?3:Math.min(3+Math.floor((n-3)/3),6),ng:n<=2?1:n<=8?2:3,amt:n===1?14:n===2?16:n<=4?12:Math.min(6+n*2,30),
-  clutter:n<5?0:Math.min(4+(n-5)*2,18),help:n<=3?.75:n<=7?.5:n<=12?.35:.2,maxShape:n<=2?10:n<=5?20:SH.length}}
-const HINT={1:null,2:'Volle Reihen <b>und</b> Spalten werden verpackt – auch mehrere gleichzeitig!',3:'<b>Sortenrein:</b> Eine Reihe aus nur einer Sorte zählt <b>doppelt</b>!',5:'<b>Schokobruch</b> blockiert Felder. Er verschwindet, wenn seine Reihe verpackt wird.'};
+// Zuglimit je Level – mit tools/balance.cjs aus Bot-Simulationen ermittelt (siehe README).
+const MOVES=[15,10,17,17,18,16,16,29,32,31,32,31,38,31,31,28,35,31,28,34,30,38,34,33,28,38,29,37,28,28,32,31,31,31,30,34,31,34,36,33];
+function params(n){const types=n<=1?2:n<=3?3:n<=6?4:n<=10?5:6,ng=n<=2?1:n<=7?2:3,moves=MOVES[Math.min(n,MOVES.length)-1]||30;
+  return{types,ng,moves,amt:n===1?14:n===2?16:n<=4?12:Math.min(8+n,18),
+  clutter:n<4?0:Math.min(3+Math.floor((n-4)*1.2),10),help:n<=1?.6:n<=3?.3:n<=8?.15:.08,bias:n<=2?.6:n<=6?.4:.3,maxShape:n<=1?10:n<=3?20:SH.length,
+  s3:Math.max(2,Math.round(moves*.15)),s2:Math.max(1,Math.round(moves*.05)),hard:n>=10&&n%5===0}}
+const HINT={1:null,2:'Deine <b>Züge</b> sind begrenzt – jedes gelegte Teil kostet einen. Wer <b>zwei Reihen auf einmal</b> verpackt, bekommt einen Zug geschenkt!',3:'<b>Sortenrein:</b> Eine Reihe aus nur einer Sorte zählt <b>doppelt</b>. Es zählen nur die bestellten Sorten – plane, wohin der Rest kommt!',4:'<b>Schokobruch</b> blockiert Felder. Er verschwindet, wenn seine Reihe verpackt wird.'};
 
 // ===== Spiel =====
-function startLevel(n){tickLives();if(S.lives<=0)return toast('Keine Leben');ac();
+function initLevel(n){
   const p=params(n),r=rng(n*7919+17),avail=[...Array(p.types).keys()];
   const goalT=n===1?[0]:n===2?[1]:[...avail].sort(()=>r()-.5).slice(0,p.ng);
-  G={n,p,r,cust:CUST[(n-1)%CUST.length],grid:[...Array(N)].map(()=>Array(N).fill(-1)),goals:goalT.map(t=>({t,need:p.amt,have:0})),tray:[],moves:0,offers:0,spoonUsed:0,streak:0,spoon:false,lock:false,tut:n===1&&!S.best[1]};
+  G={n,p,r,cust:CUST[(n-1)%CUST.length],grid:[...Array(N)].map(()=>Array(N).fill(-1)),goals:goalT.map(t=>({t,need:p.amt,have:0})),tray:[],moves:0,offers:0,spoonUsed:0,streak:0,spoon:false,lock:false,left:p.moves,tut:n===1&&!S.best[1]};
   if(n===1){[0,1,0,0,1,0].forEach((t,c)=>G.grid[7][c]=t);[1,0,0].forEach((t,c)=>G.grid[6][c]=t);G.tray=[{sh:SH[1],t:0},{sh:SH[5],t:0},{sh:SH[3],t:1}]}
-  else{let k=0;while(k<p.clutter){const rr=Math.floor(r()*N),cc=Math.floor(r()*N);if(G.grid[rr][cc]===-1){G.grid[rr][cc]=6;k++}}fixFullLines();refill()}
+  else{let k=0;while(k<p.clutter){const rr=Math.floor(r()*N),cc=Math.floor(r()*N);if(G.grid[rr][cc]===-1){G.grid[rr][cc]=6;k++}}fixFullLines();refill()}}
+function startLevel(n){tickLives();if(S.lives<=0)return toast('Keine Leben');ac();initLevel(n);const p=G.p;
   render();
   if(n===1&&!S.seenIntro){S.seenIntro=true;save();modal(`<div class="scene" style="margin:-4px -4px 8px">${shopSVG()}</div><h1>Omas Confiserie</h1><p style="font-size:18px">Lotte hat den alten Pralinenladen ihrer Oma geerbt. Hilf ihr, die ersten Bestellungen zu packen – und den Laden wieder zum Strahlen zu bringen!</p><button class="btn big" data-act="go">Los geht's!</button>`)}
-  else if(HINT[n])modal(`<div class="mut">Level ${n}</div><h2 style="margin-top:4px">Tipp</h2><p class="story">${HINT[n]}</p><button class="btn big" data-act="go">Verstanden!</button>`);
-  else go()}
+  else if(G.tut)go();
+  else modal(`<div class="mut">Level ${n} · ${G.cust[0]} bestellt</div>${p.hard?'<div style="margin-top:6px"><span class="tag">Knifflig!</span></div>':''}
+   <div style="margin:8px 0">${G.goals.map(g=>`<span class="order">${prIcon(g.t,26)} ${g.need}</span>`).join('')}</div>
+   <h1>in ${p.moves} Zügen</h1><p class="mut">★★★ mit ${p.s3} Zügen übrig · ★★ mit ${p.s2}</p>
+   ${HINT[n]?`<p class="story">${HINT[n]}</p>`:''}<button class="btn big" data-act="go">Los geht's!</button>`)}
 function go(){close();if(G&&G.tut)setTimeout(showHand,400);else resetIdle()}
 function fixFullLines(){for(let i=0;i<N;i++){if(G.grid[i].every(v=>v!==-1))G.grid[i][Math.floor(G.r()*N)]=-1;if(G.grid.every(row=>row[i]!==-1))G.grid[Math.floor(G.r()*N)][i]=-1}}
-function goalTypeBias(){const open=G.goals.filter(g=>g.have<g.need);return open.length&&G.r()<(open.length<G.goals.length?.88:.65)?open[Math.floor(G.r()*open.length)].t:Math.floor(G.r()*G.p.types)}
+function goalTypeBias(){const open=G.goals.filter(g=>g.have<g.need);return open.length&&G.r()<G.p.bias+(open.length<G.goals.length?.15:0)?open[Math.floor(G.r()*open.length)].t:Math.floor(G.r()*G.p.types)}
 function newPiece(){return{sh:SH[Math.floor(G.r()*G.p.maxShape)],t:goalTypeBias()}}
 function fitsAt(pc,r0,c0){return pc.sh.every(([r,c])=>{const R=r0+r,C=c0+c;return R>=0&&C>=0&&R<N&&C<N&&G.grid[R][C]===-1})}
 function fitsAny(pc){for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(fitsAt(pc,r,c))return true;return false}
@@ -249,15 +263,16 @@ function helpfulPiece(){const idx=[...Array(G.p.maxShape).keys()].sort(()=>G.r()
 function dominant(vals){const cnt={};vals.forEach(v=>{if(v>=0&&v<6)cnt[v]=(cnt[v]||0)+1});let b=-1,bc=0;const need=new Set(G.goals.filter(g=>g.have<g.need).map(g=>g.t));for(const k in cnt)if(cnt[k]>bc&&(!need.size||need.has(+k))){bc=cnt[k];b=+k}return b>=0?b:goalTypeBias()}
 function fill(){let f=0;G.grid.forEach(r=>r.forEach(v=>{if(v!==-1)f++}));return f/(N*N)}
 function smallPiece(){return{sh:SH[Math.floor(G.r()*5)],t:goalTypeBias()}}
-function refill(){const crowded=fill()>.5,early=G.n<=8;
+function refill(){const crowded=fill()>.5,early=G.n<=2;
   for(let a=0;a<40;a++){const t=[0,1,2].map(()=>G.r()<G.p.help&&helpfulPiece()||(crowded&&G.r()<.7?smallPiece():newPiece()));
     if((early?t.every(fitsAny):t.some(fitsAny))||a===39){G.tray=t;return}}}
 function renderGame(){const c=G.cust;$('#view').innerHTML=`<div id="hud"><button class="rb" data-act="quit">❚❚</button>
-  <div id="order"><div class="av" style="background:${c[1]}">${c[0].split(' ').pop()[0]}</div><div class="oinfo"><div class="oname">${c[0]} bestellt · Level ${G.n}</div><div id="goals"></div></div></div>
+  <div id="order" class="${G.goals.length>2?'g3':''}"><div class="av" style="background:${c[1]}">${c[0].split(' ').pop()[0]}</div><div class="oinfo"><div class="oname">${c[0]} bestellt · Level ${G.n}</div><div id="goals"></div></div><div id="mv"><b id="mvN"></b><small>Züge</small></div></div>
   <button class="rb" data-act="spoon" id="spoonBtn">🥄${S.spoons}</button></div>
   <div id="boardWrap"><div id="board"></div></div><div id="trayRow"></div>`;
-  drawBoard();drawTray();drawGoals()}
-function drawGoals(){$('#goals').innerHTML=G.goals.map(g=>{const d=g.have>=g.need;return `<div class="gl ${d?'done':''}" id="goal${g.t}">${prIcon(g.t,26)}<span>${d?'✓':Math.max(0,g.need-g.have)}</span></div>`}).join('')}
+  drawBoard();drawTray();drawGoals();drawMoves()}
+function drawMoves(bump){const e=$('#mv');if(!e)return;$('#mvN').textContent=Math.max(0,G.left);e.classList.toggle('low',G.left<=3);if(bump){e.classList.remove('bump');void e.offsetWidth;e.classList.add('bump')}}
+function drawGoals(){$('#goals').innerHTML=G.goals.map(g=>{const d=g.have>=g.need;return `<div class="gl ${d?'done':''}" id="goal${g.t}">${prIcon(g.t,G.goals.length>2?22:26)}<span>${d?'✓':Math.max(0,g.need-g.have)}</span></div>`}).join('')}
 function cellHTML(v){return v===-1?'':`<svg viewBox="-12 -12 24 24">${prShape(v,10.5)}</svg>`}
 function drawBoard(){const b=$('#board');let h='';for(let r=0;r<N;r++)for(let c=0;c<N;c++)h+=`<div class="cell" data-r="${r}" data-c="${c}">${cellHTML(G.grid[r][c])}</div>`;b.innerHTML=h;b.classList.toggle('spoonMode',G.spoon)}
 function pieceHTML(pc,cs){const R=Math.max(...pc.sh.map(x=>x[0]))+1,C=Math.max(...pc.sh.map(x=>x[1]))+1;let h=`<div class="pc" style="width:${C*cs}px;height:${R*cs}px">`;
@@ -279,7 +294,7 @@ function hideHand(){cancelAnimationFrame(handT);const h=$('#hand');if(h)h.remove
 
 // --- Hinweis bei Untätigkeit ---
 let idleT=0;
-function resetIdle(){clearTimeout(idleT);clearHint();idleT=setTimeout(showHint,7000)}
+function resetIdle(){clearTimeout(idleT);clearHint();idleT=setTimeout(showHint,G&&G.n>2?25000:7000)}
 function clearHint(){document.querySelectorAll('.hint').forEach(e=>{e.classList.remove('hint');if(G)e.innerHTML=cellHTML(G.grid[+e.dataset.r][+e.dataset.c])})}
 function bestMove(){let best=null;G.tray.forEach((pc,k)=>{if(!pc)return;for(let r=0;r<N;r++)for(let c=0;c<N;c++){if(!fitsAt(pc,r,c))continue;
   const tmp=G.grid.map(x=>x.slice());pc.sh.forEach(([a,b])=>tmp[r+a][c+b]=pc.t);let sc=0;for(let i=0;i<N;i++){if(tmp[i].every(v=>v!==-1))sc+=10;if(tmp.every(x=>x[i]!==-1))sc+=10}
@@ -311,15 +326,19 @@ function moveDrag(e){const d=drag,x=e.clientX-d.w/2,y=e.clientY-d.h-Math.max(56,
 function clearPv(){document.querySelectorAll('.pv').forEach(e=>{e.classList.remove('pv');e.innerHTML=cellHTML(G.grid[+e.dataset.r][+e.dataset.c])});document.querySelectorAll('.pvl').forEach(e=>e.classList.remove('pvl'))}
 
 // --- Legen & Verpacken ---
+// Volle Reihen/Spalten im Raster finden: jede Praline zählt 1, eine sortenreine Linie zusätzlich +8.
+function scoreLines(grid){const rows=[],cols=[];for(let i=0;i<N;i++){if(grid[i].every(v=>v!==-1))rows.push(i);if(grid.every(row=>row[i]!==-1))cols.push(i)}
+  const lines=[...rows.map(i=>[...Array(N).keys()].map(c=>[i,c])),...cols.map(i=>[...Array(N).keys()].map(r=>[r,i]))],seen=new Set(),gain={};let pure=0;
+  lines.forEach(L=>{const t0=grid[L[0][0]][L[0][1]];if(t0!==6&&L.every(([r,c])=>grid[r][c]===t0)){pure++;gain[t0]=(gain[t0]||0)+N}
+    L.forEach(([r,c])=>{const key=r*N+c;if(!seen.has(key)){seen.add(key);const v=grid[r][c];if(v!==6)gain[v]=(gain[v]||0)+1}})});
+  return{lines,seen,gain,pure}}
+function bonusMoves(n){return n>=3?2:n===2?1:0}
 function place(k,r0,c0){hideHand();if(G.tut){G.tut=false}
-  const pc=G.tray[k];pc.sh.forEach(([r,c])=>G.grid[r0+r][c0+c]=pc.t);G.tray[k]=null;G.moves++;sfx('plop');vib(12);
-  const rows=[],cols=[];for(let i=0;i<N;i++){if(G.grid[i].every(v=>v!==-1))rows.push(i);if(G.grid.every(row=>row[i]!==-1))cols.push(i)}
-  const lines=[...rows.map(i=>[...Array(N).keys()].map(c=>[i,c])),...cols.map(i=>[...Array(N).keys()].map(r=>[r,i]))];
-  drawBoard();pc.sh.forEach(([r,c])=>cellEl(r0+r,c0+c).classList.add('drop'));
+  const pc=G.tray[k];pc.sh.forEach(([r,c])=>G.grid[r0+r][c0+c]=pc.t);G.tray[k]=null;G.moves++;G.left--;sfx('plop');vib(12);
+  const{lines,seen,gain,pure}=scoreLines(G.grid);
+  drawBoard();drawMoves();pc.sh.forEach(([r,c])=>cellEl(r0+r,c0+c).classList.add('drop'));
   if(!lines.length){G.streak=0;return after()}
-  G.streak++;G.lock=true;const seen=new Set(),gain={};let pure=0;
-  lines.forEach(L=>{const t0=G.grid[L[0][0]][L[0][1]];if(t0!==6&&L.every(([r,c])=>G.grid[r][c]===t0)){pure++;gain[t0]=(gain[t0]||0)+N}
-    L.forEach(([r,c])=>{const key=r*N+c;if(!seen.has(key)){seen.add(key);const v=G.grid[r][c];if(v!==6)gain[v]=(gain[v]||0)+1}})});
+  G.streak++;G.lock=true;const extra=bonusMoves(lines.length);G.left+=extra;
   const size=cs(),rc=$('#board').getBoundingClientRect();let flyN=0;
   [...seen].sort((a,b)=>a-b).forEach((key,i)=>{const r=Math.floor(key/N),c=key%N,v=G.grid[r][c],x=rc.left+(c+.5)*size,y=rc.top+(r+.5)*size;
     setTimeout(()=>{const e=cellEl(r,c);if(e)e.classList.add('clr')},i*14);
@@ -331,10 +350,12 @@ function place(k,r0,c0){hideHand();if(G.tut){G.tut=false}
   const word=pure?'Sortenrein!':n>=3?'Himmlisch!':n===2?'Doppelt lecker!':G.streak>=3?'Kombo ×'+G.streak+'!':['Lecker!','Wunderbar!','Fein!'][Math.floor(Math.random()*3)];
   floatText(rc.left+rc.width/2,rc.top+rc.height*.45,word,pure?'#e09528':'#ff4f84');
   if(pure)setTimeout(()=>floatText(rc.left+rc.width/2,rc.top+rc.height*.6,'zählt doppelt','#e09528'),250);
+  if(extra){drawMoves(true);setTimeout(()=>floatText(rc.left+rc.width/2,rc.top+rc.height*(pure?.75:.6),'+'+extra+(extra>1?' Züge':' Zug'),'#3fae6a'),pure?500:250)}
   setTimeout(()=>{if(!G)return;seen.forEach(key=>G.grid[Math.floor(key/N)][key%N]=-1);G.lock=false;drawBoard();drawGoals();drawTop();after()},380)}
-function after(){drawGoals();if(G.goals.every(g=>g.have>=g.need)){G.lock=true;return setTimeout(win,550)}
+function after(){drawGoals();drawMoves();if(G.goals.every(g=>g.have>=g.need)){G.lock=true;return setTimeout(win,550)}
   if(G.tray.every(x=>!x))refill();drawTray();
-  if(!G.tray.some(x=>x&&fitsAny(x))){G.lock=true;setTimeout(()=>{if(G){G.lock=false;failOffer()}},600)}}
+  const kind=G.left<=0?'moves':!G.tray.some(x=>x&&fitsAny(x))?'full':'';
+  if(kind){G.lock=true;setTimeout(()=>{if(G){G.lock=false;failOffer(kind)}},600)}}
 function flyTo(x,y,t,delay){const tg=$('#goal'+t);if(!tg)return;const tr=tg.getBoundingClientRect(),e=document.createElement('div');e.className='fly';e.innerHTML=prIcon(t,30);
   e.style.left=x+'px';e.style.top=y+'px';document.body.appendChild(e);
   setTimeout(()=>{e.style.transform=`translate(${tr.left+16-x}px,${tr.top+tr.height/2-y}px) scale(.7)`},delay+20);
@@ -348,20 +369,25 @@ function floatText(x,y,t,c){const e=document.createElement('div');e.className='f
 // ===== Modals =====
 function modal(h){$('#mc').innerHTML=h;$('#modal').classList.remove('hidden')}
 function close(){$('#modal').classList.add('hidden')}
-function failOffer(){S.stats.fails++;save();const left=G.goals.reduce((a,g)=>a+Math.max(0,g.need-g.have),0);
-  modal(`<h2>Die Schachtel ist voll!</h2><p style="font-size:18px">Nur noch <b>${left}</b> Pralinen – ${G.cust[0]} wartet schon!</p>
-  <div class="order" style="margin:8px 0">✨ Mitte freiräumen + neue Teile</div>
-  <button class="btn gold big" data-act="offer">Weiterspielen<span class="sub">Testversion – kostenlos</span></button>
+function failOffer(kind){S.stats.fails++;save();G.failKind=kind;sfx('bad');const left=G.goals.reduce((a,g)=>a+Math.max(0,g.need-g.have),0),mv=kind==='moves';
+  // Nur eine Rettung pro Level – danach ist das Level verloren.
+  if(G.offers>=1)return modal(`<h2>Leider nicht geschafft</h2><p style="font-size:18px">Es fehlten noch <b>${left}</b> Pralinen. ${G.cust[0]} kommt morgen wieder!</p>
+  <button class="btn big" data-act="retry">Nochmal versuchen<span class="sub">−1 ❤</span></button><button class="btn gh" data-act="giveup">Zurück zum Laden (−1 ❤)</button>`);
+  modal(`<h2>${mv?'Keine Züge mehr!':'Die Schachtel ist voll!'}</h2><p style="font-size:18px">Nur noch <b>${left}</b> Pralinen – ${G.cust[0]} wartet schon!</p>
+  <div class="order" style="margin:8px 0">${mv?'✨ 5 Züge extra':'✨ Mitte freiräumen + neue Teile'}</div>
+  <button class="btn gold big" data-act="offer">Weiterspielen<span class="sub">Testversion – kostenlos · einmal pro Level</span></button>
   <button class="btn gh" data-act="giveup">Aufgeben (−1 ❤)</button>`)}
-function continueGame(){G.offers++;for(let r=2;r<6;r++)for(let c=2;c<6;c++)G.grid[r][c]=-1;const t=G.goals.find(g=>g.have<g.need)||G.goals[0];
-  G.tray=[{sh:SH[5],t:t.t},{sh:SH[3],t:t.t},{sh:SH[1],t:t.t}];close();drawBoard();drawTray();confetti();sfx('clear',3)}
-function win(){const n=G.n,st=G.offers?1:G.spoonUsed?2:3,c=G.cust;S.stats.wins++;if(Date.now()-S.stats.first<70000)S.stats.firstMinLevel=n;
-  const prev=S.best[n]||0;if(st>prev){S.stars+=st-prev;S.best[n]=st}const reward=30+st*10;S.coins+=reward;if(n===S.level)S.level++;save();
+function continueGame(){G.offers++;close();confetti();sfx('clear',3);
+  if(G.failKind==='moves'){G.left+=5;drawMoves(true);return resetIdle()}
+  for(let r=2;r<6;r++)for(let c=2;c<6;c++)G.grid[r][c]=-1;const t=G.goals.find(g=>g.have<g.need)||G.goals[0];
+  G.tray=[{sh:SH[5],t:t.t},{sh:SH[3],t:t.t},{sh:SH[1],t:t.t}];drawBoard();drawTray()}
+function win(){const n=G.n,left=Math.max(0,G.left),st=G.offers?1:left>=G.p.s3?3:left>=G.p.s2?2:1,c=G.cust;S.stats.wins++;if(Date.now()-S.stats.first<70000)S.stats.firstMinLevel=n;
+  const prev=S.best[n]||0;if(st>prev){S.stars+=st-prev;S.best[n]=st}const reward=30+st*10+left*2;S.coins+=reward;if(n===S.level)S.level++;save();
   G=null;render();confetti();sfx('win');vib([30,40,30]);
   const nb=nextBuild(),av=S.stars-S.spent,can=nb>=0&&av>=BUILD[nb][1];
   modal(`<div class="mut">${c[0]} ist begeistert!</div><h1>Geliefert!</h1>
    <div class="stars">${[0,1,2].map(i=>`<span class="${i<st?'on':''}" style="animation-delay:${.25+i*.3}s">★</span>`).join('')}</div>
-   <div style="font-size:20px;font-weight:900">+${reward} 🪙</div>
+   <div style="font-size:20px;font-weight:900">+${reward} 🪙</div><div class="mut">${left} ${left===1?'Zug':'Züge'} übrig</div>
    ${nb>=0?`<div style="margin-top:10px;text-align:left"><div class="row" style="padding:0"><b>${BUILD[nb][0]}</b><span>⭐ ${Math.min(av,BUILD[nb][1])}/${BUILD[nb][1]}</span></div><div class="bar"><i id="wbar" style="width:${Math.min(1,(av-st)/BUILD[nb][1])*100}%"></i></div></div>`:''}
    ${can?`<button class="btn gold big" data-act="build" data-i="${nb}">✨ ${BUILD[nb][0]} aufbauen</button>`:`<button class="btn big" data-act="next">Weiter</button>`}`);
   [0,1,2].forEach(i=>{if(i<st)setTimeout(()=>sfx('star',1+i*.25),250+i*300)});
@@ -386,7 +412,8 @@ document.addEventListener('click',e=>{
   else if(act==='quit')modal(`<h2>Pause</h2><button class="btn big" data-act="go">Weiterspielen</button><button class="btn gh" data-act="giveup">Aufgeben (−1 ❤)</button>`);
   else if(act==='spoon'){if(S.spoons<=0)return toast('Keine Löffel mehr');G.spoon=!G.spoon;drawBoard();toast(G.spoon?'Tippe eine Praline an':'Löffel weggelegt')}
   else if(act==='offer')continueGame();
-  else if(act==='giveup'){S.stats.quits++;loseLife();hideHand();close();G=null;render();toast('−1 ❤')}
+  else if(act==='giveup'){S.stats.quits++;loseLife();hideHand();clearTimeout(idleT);close();G=null;render();toast('−1 ❤')}
+  else if(act==='retry'){const n=G.n;loseLife();clearTimeout(idleT);close();G=null;if(S.lives>0)startLevel(n);else render()}
   else if(act==='next'){close();if(S.lives>0)startLevel(S.level);else render()}
   else if(act==='build')doBuild(+a.dataset.i);
   else if(act==='close'){close();if(!G)render()}
