@@ -8,6 +8,8 @@
 - **Ablage:** Ein Teil zurücklegen oder tauschen.
 - **Krokant** blockiert Felder, **Eiskonfekt** schmilzt nach 9 Zügen zu Krokant.
 - **Tagesschachtel:** jeden Tag dieselbe Teilefolge für alle, eigener Bestwert.
+- **Blitzrunde:** 30 Züge auf Punkte, eigener Bestwert – die kurze Partie für zwischendurch.
+- **Erste Züge geführt:** Neue Spieler bekommen statt eines Regel-Dialogs vier Schritte am Spielfeld (legen, drehen, Reihe verpacken, Bestellung).
 - **Ränge und Schachtel-Designs** werden über die höchste erreichte Bestellung freigeschaltet.
 - **Tagesrunde:** Jeder Tag mit der Tagesschachtel zählt weiter (7 Tage = eine Runde, +1 ★ je Tag, +5 ★ am siebten). Ein verpasster Tag setzt nichts zurück.
 - **Tagesziele:** drei pro Tag, für alle gleich; Fortschritt zählt über alle Partien des Tages. Jedes Ziel bringt 1 ★, alle drei zusammen 2 ★ extra.
@@ -17,7 +19,7 @@
 
 Live: https://confiserie.micana.de
 
-Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Spielstände liegen im `localStorage`: `cs_best` (Bestwert), `cs_meta` (Rang, Design, Einstellungen, Sterne, Tagesziele, Tagesrunde, Auszeichnungen), `cs_run_saison` und `cs_run_tag` (laufende Partien). Dazu `cs_playtest` (Testprotokoll) und `cs_install_skip` (Zeitpunkt von „Im Browser weiterspielen“).
+Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Spielstände liegen im `localStorage`: `cs_best` (Bestwert), `cs_meta` (Rang, Design, Einstellungen, Sterne, Tagesziele, Tagesrunde, Auszeichnungen), `cs_run_saison`, `cs_run_tag` und `cs_run_blitz` (laufende Partien). Dazu `cs_playtest` (Testprotokoll) und `cs_install_skip` (Zeitpunkt von „Im Browser weiterspielen“).
 
 ## Aufbau
 
@@ -29,6 +31,7 @@ Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe R
 | `fonts/` | Nunito 700/800/900, Playfair Display Italic 700 (SIL OFL 1.1, Lizenztexte liegen bei) |
 | `icons/` | App-Icons, erzeugt mit `tools/make-icons.mjs` |
 | `art/source/` | Quellbilder (PNG, 1024 px) für Sprites und Icon, gezeichnet von `tools/make-art.mjs` |
+| `art/PROMPTS.md` | Prompts, um die Quellbilder mit einem Bildgenerator als gemalte Fassung zu erzeugen |
 | `sprites/` | Pralinen-Sprites (WebP, 256 px), erzeugt mit `tools/make-sprites.mjs` |
 | `tools/` | Hilfsskripte; ihre Pakete stehen als devDependencies in `package.json` |
 | `.github/workflows/pages.yml` | Deployment auf GitHub Pages |

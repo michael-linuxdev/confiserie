@@ -157,7 +157,8 @@ function brittleParts(band) {
   const face = `<clipPath id="fc"><polygon points="${SHARD}"/></clipPath><g clip-path="url(#fc)">${bubbles}
       <path d="M318 226 L 420 470 L 250 780 M420 470 L 640 500 L 800 548 M640 500 L 610 806" fill="none" stroke="#7a3f0c" stroke-opacity=".4" stroke-width="9" stroke-linejoin="round"/>
       ${almonds}</g>${gloss(420, 300, 80, 26, -20, .7)}${gloss(720, 420, 46, 18, 40, .55)}`;
-  let out = solid((a) => `<polygon points="${SHARD}" ${a}/>`, { depth: 70, top: '#dd8f2a', side: '#8f4c12', line: '#4a2206', round: 16 }).replace('FACE', face + (band ? 'BAND' : ''));
+  // dunkler als Karamell, damit beide nicht verwechselt werden
+  let out = solid((a) => `<polygon points="${SHARD}" ${a}/>`, { depth: 70, top: '#b9691f', side: '#703608', line: '#3a1803', round: 16 }).replace('FACE', face + (band ? 'BAND' : ''));
   if (band) {
     // Goldfolie: läuft quer über Deckfläche und Seitenwand
     const sweep = [...Array(15)].map((_, i) => `<polygon points="${SHARD}" transform="translate(0 ${i * 5})" stroke="#000" stroke-width="16" stroke-linejoin="round"/>`).join('');

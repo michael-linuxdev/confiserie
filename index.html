@@ -79,7 +79,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
   background:radial-gradient(circle,rgba(16,42,74,.62) 0 21%,rgba(16,42,74,0) 34%);text-shadow:0 1px 2px #06182e,0 0 5px #06182e}
 .prl.hot{animation:hot .7s infinite}
 @keyframes hot{50%{filter:drop-shadow(0 0 2px #ff2f6e) drop-shadow(0 0 6px #ff4f84)}}
-.piece .prl[data-t]::before,.demo .prl[data-t]::before{font-size:calc(var(--bw)*.03)}
+.piece .prl[data-t]::before,.demo .prl[data-t]::before{font-size:calc(var(--bw)*.038);background:radial-gradient(circle,rgba(16,42,74,.7) 0 30%,rgba(16,42,74,0) 46%)}
 #drag .prl[data-t]::before{font-size:calc(var(--bw)*.052)}
 .ghost{opacity:.6}
 .pop{animation:pop .38s ease-out forwards}
@@ -89,7 +89,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .melt{animation:mlt .5s ease-out}
 @keyframes mlt{0%{transform:scale(1.5);filter:brightness(2)}100%{transform:scale(1);filter:brightness(1)}}
 /* Ablage + Teile */
-.tray{width:var(--bw);flex:0 1 calc(var(--bw)*.42);min-height:calc(var(--bw)*.3);display:flex;align-items:stretch;margin-top:12px;gap:4px}
+.tray{width:var(--bw);flex:0 1 calc(var(--bw)*.48);min-height:calc(var(--bw)*.3);display:flex;align-items:stretch;margin-top:12px;gap:4px}
 .slot{flex:1;position:relative;display:flex;align-items:center;justify-content:center;cursor:grab;border-radius:16px}
 .slot.hold{background:rgba(255,250,244,.7);box-shadow:inset 0 0 0 2px var(--line);margin-right:4px}
 .slot.hold::before{content:"Ablage";position:absolute;top:5px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);font-weight:800}
@@ -105,6 +105,16 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .slot.nofit.rotfit .piece{opacity:.8;filter:grayscale(.35)}
 .slot.rotfit::after{content:"↻";position:absolute;right:4px;bottom:4px;width:24px;height:24px;border-radius:50%;background:var(--rose);color:#fff;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 #a8355a;animation:bmp .9s infinite;pointer-events:none}
 .slot.dragging::after{display:none}
+/* Vorschau in der Bestellleiste: was der Zug unter dem Finger bringt */
+.gl .pv{font-style:normal;font-size:13px;font-weight:900;color:#fff;background:var(--ok);border-radius:9px;padding:1px 6px;margin-left:2px}
+#order.deliv{animation:dlv .9s ease-out}
+@keyframes dlv{0%{box-shadow:0 2px 0 var(--line)}25%{transform:scale(1.04);box-shadow:0 0 0 4px var(--gold),0 0 22px var(--gold)}100%{box-shadow:0 2px 0 var(--line)}}
+/* Geführte erste Züge: das Element, um das es gerade geht, pulsiert */
+.coach{animation:coach 1.2s ease-in-out infinite}
+#tray.coach{border-radius:18px}
+@keyframes coach{50%{box-shadow:0 0 0 3px var(--rose),0 0 16px var(--rose)}}
+.hint.big{font-size:15px;line-height:1.3;color:var(--ink)}
+@media (max-height:600px){.card{padding:14px 16px}.btn{padding:10px 14px;margin-top:8px}.card .t{font-size:26px}}
 @media (max-height:660px){.hero{display:none}}
 .piece.spin{animation:spin .22s ease-out}
 @keyframes spin{from{transform:rotate(-90deg) scale(.8)}to{transform:none}}
@@ -153,7 +163,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .qs h4{margin:0 0 3px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}
 .qs h4 b{color:var(--goldt);font-size:13px;letter-spacing:0}
 .q{display:flex;justify-content:space-between;gap:8px;padding:3px 0}.q b{white-space:nowrap}.q.ok{color:var(--ok)}
-.dots{letter-spacing:3px;color:var(--gold)}
+.dots{letter-spacing:1px;color:var(--gold)}
 .lbl{font-size:12px;color:var(--mut);font-weight:800}
 .over.full{background:var(--cream);align-items:flex-start;overflow:auto;z-index:50;touch-action:pan-y}
 .over.full .card{box-shadow:none;background:none;max-height:none;margin:auto;animation:none;padding:14px 8px}
@@ -184,7 +194,7 @@ textarea{font:inherit;font-size:13px;width:100%;height:64px;border:2px solid var
 <button id="upd" type="button" hidden>Neue Version – tippen zum Aktualisieren</button>
 <script>
 (function(){
-const N=8,R=8,TIMER=9,MAXROT=9;   // N Spalten, R Zeilen
+const N=8,R=8,TIMER=9,MAXROT=9,BLITZ=30;   // N Spalten, R Zeilen
 document.documentElement.style.setProperty('--rows',R);document.documentElement.style.setProperty('--rr',R/N);
 const RAW=["X","XX","X\nX","XXX","X\nX\nX","XXXX","X\nX\nX\nX","XXXXX","X\nX\nX\nX\nX","XX\nXX","XXX\nXXX\nXXX",
 "XX\nX.","XX\n.X","X.\nXX",".X\nXX","XXX\nX..","XXX\n..X","X..\nXXX","..X\nXXX","X.\nX.\nXX",".X\n.X\nXX","XX\nX.\nX.","XX\n.X\n.X",
@@ -203,7 +213,7 @@ const cellEls=[];for(let i=0;i<N*R;i++){const d=document.createElement('div');d.
 
 // ===== Speicher =====
 function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
-const M=Object.assign({bestStage:1,theme:0,mute:false,seenHelp:false,games:0,daily:{d:'',best:0},streak:{d:'',n:0},ach:{},stars:0,cup:0,q:{d:'',p:{},got:[0,0,0],all:0},pt:true},ls('cs_meta')||{});
+const M=Object.assign({bestStage:1,theme:0,mute:false,seenHelp:false,games:0,daily:{d:'',best:0},streak:{d:'',n:0},ach:{},stars:0,cup:0,blitz:0,tut:-1,q:{d:'',p:{},got:[0,0,0],all:0},pt:true},ls('cs_meta')||{});
 let best=parseInt(ls('cs_best'))||0;
 function saveMeta(){ls('cs_meta',M)}
 function saveRun(){if(G&&!G.over)ls('cs_run_'+G.mode,G)}
@@ -244,7 +254,7 @@ function ptExport(){ptFlush();const text=PTL.map(x=>JSON.stringify(x)).join('\n'
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=name;a.click()}
 function endRun(){pt('over',{mode:G.mode,score:G.score,stage:G.stage,moves:G.stats.moves,why:G.over,sec:G.ts?Math.round((Date.now()-G.ts)/1000):0});qTick({games:1});ptFlush()}
 // Spielstand als Code mitnehmen (Browser → installierte App; auf dem iPhone haben beide getrennte Speicher)
-const SAVE_KEYS=['cs_best','cs_meta','cs_run_saison','cs_run_tag'];
+const SAVE_KEYS=['cs_best','cs_meta','cs_run_saison','cs_run_tag','cs_run_blitz'];
 function saveCode(){saveRun();const o={};SAVE_KEYS.forEach(k=>{try{const v=localStorage.getItem(k);if(v!=null)o[k]=v}catch(e){}});return'TB1.'+btoa(unescape(encodeURIComponent(JSON.stringify(o))))}
 function loadCode(c){try{c=String(c).trim();if(c.slice(0,4)!=='TB1.')return false;const o=JSON.parse(decodeURIComponent(escape(atob(c.slice(4)))));let n=0;
   Object.keys(o).forEach(k=>{if(SAVE_KEYS.includes(k)){JSON.parse(o[k]);localStorage.setItem(k,o[k]);n++}});return n>0}catch(e){return false}}
@@ -300,10 +310,10 @@ function isDead(){const tr=G.tray.filter(Boolean),all=G.hold?tr.concat([G.hold])
 
 function startGame(mode){const d=today();
   G={mode,day:d,rs:mode==='tag'?(parseInt(d.replace(/-/g,''))*2654435761)|0:(Math.random()*2**32)|0,board:Array(N*R).fill(null),tray:[],hold:null,score:0,streak:0,stage:1,hearts:3,rot:3,order:null,
-    stats:{moves:0,lines:0,pure:0,orders:0,melted:0,saved:0},over:false,ts:Date.now()};
+    stats:{moves:0,lines:0,pure:0,orders:0,melted:0,saved:0},over:false,ts:Date.now()};if(mode==='blitz')G.bl=BLITZ;
   newOrder();G.tray=newTray();M.games++;saveMeta();saveRun();pt('start',{mode});enter()}
 function enter(){$('menu').classList.add('hidden');$('over').classList.add('hidden');document.body.classList.add('ingame');
-  $('hint').style.opacity=G.stats.moves<4?1:0;$('hint').innerHTML='Teile in die Schachtel ziehen · <b>Antippen</b> dreht ein Teil (↻)';stuckShown=false;renderAll()}
+  $('hint').style.opacity=G.stats.moves<4?1:0;$('hint').innerHTML='Teile in die Schachtel ziehen · <b>Antippen</b> dreht ein Teil (↻)';stuckShown=false;$('hint').classList.remove('big');[$('tray'),$('order'),$('box')].forEach(e=>e.classList.remove('coach'));renderAll();if(M.tut>=0&&M.tut<4)coach()}
 
 function place(i,r,c){const pc=i===3?G.hold:G.tray[i],placed=new Set(),b=G.board;
   pc.cells.forEach(([dr,dc],k)=>{const idx=(r+dr)*N+c+dc;b[idx]=k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c};placed.add(idx)});
@@ -321,7 +331,7 @@ function place(i,r,c){const pc=i===3?G.hold:G.tray[i],placed=new Set(),b=G.board
     if(pure)msgs.push(['zählt doppelt','sm']);else if(saved)msgs.push(['Eiskonfekt gerettet','sm']);
     if(n>=3&&G.rot<MAXROT){G.rot++;msgs.push(['+1 ↻','sm'])}
     if(b.every(v=>v==null)){empty=true;pts+=150;msgs.push(['Alles verpackt! +150','sm'])}
-    sfx('clear',G.streak+n);buzz(n>1?[20,40,20]:20)}
+    sfx('clear',G.streak+n);buzz(n>1||G.streak>2?[20,40,20,40,Math.min(20+10*G.streak,60)]:G.streak>1?[20,40,20]:20)}
   else{G.streak=0;sfx('plop');buzz(8)}
   if(melted.size){msgs.push(['Geschmolzen!','sm bad']);sfx('bad');shake()}
   G.order.goals.forEach(g=>{if(gain[g.c])g.have+=gain[g.c]});G.order.left--;
@@ -333,17 +343,19 @@ function place(i,r,c){const pc=i===3?G.hold:G.tray[i],placed=new Set(),b=G.board
   else if(G.order.left<=0){pt('order',{ok:0,stage:G.stage});G.hearts--;msgs.push(['Bestellung geplatzt! −1 ♥','sm bad']);sfx('bad');shake();if(G.hearts>0)newOrder()}
   setScore(G.score+pts,true);checkAch(n,empty);if(G.mode==='tag')bumpStreak();qTick({lines:n,pure,orders:conf?1:0,multi:n>=2?1:0});
   if(G.tray.every(t=>!t))G.tray=newTray();
-  if(G.hearts<=0)G.over='herz';else if(isDead())G.over='voll';
-  if(G.stats.moves>=4)$('hint').style.opacity=0;
+  if(G.mode==='blitz')G.bl--;
+  if(G.hearts<=0)G.over='herz';else if(G.mode==='blitz'&&G.bl<=0)G.over='zeit';else if(isDead())G.over='voll';
+  if(G.stats.moves>=4&&!(M.tut>=0&&M.tut<4))$('hint').style.opacity=0;
   renderBoard(cleared,placed,melted,newBlk);renderTray();renderOrder(gain);
-  if(FX){cleared.forEach((v,k)=>burstCell(k,v));msgs.forEach(([t,cls],q)=>setTimeout(()=>toast(t,cls),q*260));if(conf)confetti()}
+  if(FX){cleared.forEach((v,k)=>burstCell(k,v));msgs.forEach(([t,cls],q)=>setTimeout(()=>toast(t,cls),q*260));if(conf){confetti();const o=$('order');o.classList.remove('deliv');void o.offsetWidth;o.classList.add('deliv');buzz([30,50,30,50,60])}}
+  $('box').classList.remove('coach');if(n)coach('line');coach('place');
   if(G.over){ls('cs_run_'+G.mode,null);endRun();setTimeout(showOver,FX?900:0)}else saveRun()}
 function toHold(i){const pc=G.tray[i];G.tray[i]=G.hold;G.hold=pc;sfx('pick');pt('hold');
   if(G.tray.every(t=>!t))G.tray=newTray();
   if(isDead()){G.over='voll';ls('cs_run_'+G.mode,null);endRun();setTimeout(showOver,700)}else saveRun();renderTray()}
 function rotate(i){const pc=i===3?G.hold:G.tray[i];if(!pc)return;const r=rotated(pc);if(key(r)===key(pc))return;
   if(G.rot<=0){toast('Keine Drehung mehr','sm bad');return sfx('bad')}
-  G.rot--;if(i===3)G.hold=r;else G.tray[i]=r;sfx('pick');pt('rot');saveRun();renderTray();renderOrder();
+  G.rot--;if(i===3)G.hold=r;else G.tray[i]=r;sfx('pick');pt('rot');coach('rot');saveRun();renderTray();renderOrder();
   const el=slotEls[i].querySelector('.piece');if(el)el.classList.add('spin')}
 
 // ===== Darstellung =====
@@ -355,19 +367,33 @@ function renderBoard(cleared,placed,melted,newBlk){for(let i=0;i<N*R;i++){const 
 function makePiece(pc,pitch,size){let h='<div class="piece" style="width:'+((pc.w-1)*pitch+size)+'px;height:'+((pc.h-1)*pitch+size)+'px">';
   pc.cells.forEach(([r,c],k)=>h+='<div style="left:'+c*pitch+'px;top:'+r*pitch+'px;width:'+size+'px;height:'+size+'px">'+node(k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c})+'</div>');return h+'</div>'}
 function renderTray(){const m=metrics(),sw=slotEls[0].getBoundingClientRect().width;slotEls.forEach((s,i)=>{const pc=i===3?G.hold:G.tray[i];s.classList.remove('nofit','rotfit','dragging','tgt');
-  const k=pc?Math.min(.7,sw*.94/(Math.max(pc.w,pc.h)*m.pitch)):0;   // kleine Teile größer zeigen, lange passen trotzdem in den Platz
+  const k=pc?Math.min(.8,sw*.94/(Math.max(pc.w,pc.h)*m.pitch)):0;   // kleine Teile größer zeigen, lange passen trotzdem in den Platz
   s.innerHTML=pc?makePiece(pc,m.pitch*k,m.size*k):'';if(pc&&!canFit(pc)){s.classList.add('nofit');if(G.rot>0&&!G.over&&canFitRot(pc))s.classList.add('rotfit')}});stuckHint()}
+// Geführte erste Züge statt Regel-Dialog: 0 legen · 1 drehen · 2 Reihe verpacken · 3 Bestellung · 4 fertig
+const COACH=['<b>Zieh ein Teil</b> in die Schachtel','<b>Tippe ein Teil an</b> – es dreht sich (kostet eine Drehung ↻)','Fülle eine <b>ganze Reihe</b> oder Spalte – sie wird verpackt','Oben steht die <b>Bestellung</b>: Sorten sammeln, bevor die Züge ausgehen'];
+let coachAt=0;
+function coach(ev){if(M.tut<0||M.tut>3)return;const was=M.tut;
+  if(M.tut===0&&ev==='place')M.tut=1;
+  else if(M.tut===1&&(ev==='rot'||(ev==='place'&&G.stats.moves-coachAt>=2)))M.tut=2;
+  else if(M.tut===2&&ev==='line')M.tut=3;
+  else if(M.tut===3&&ev==='place'&&G.stats.moves-coachAt>=3)M.tut=4;
+  if(M.tut!==was){coachAt=G.stats.moves;if(M.tut===4)M.seenHelp=true;saveMeta();pt('tut',{s:M.tut})}
+  const h=$('hint'),t=M.tut;[$('tray'),$('order')].forEach(e=>e.classList.remove('coach'));
+  if(t>3){h.classList.remove('big');h.style.opacity=0;return}
+  if(!stuckShown){h.innerHTML=COACH[t];h.classList.add('big');h.style.opacity=1}
+  (t===3?$('order'):t<2?$('tray'):$('box')).classList.add('coach');if(t===2)$('tray').classList.remove('coach')}
 // Passt kein Teil so, wie es liegt, sagt der Hinweis, was noch geht (drehen oder Ablage) – sonst wirkt das Spiel eingefroren.
 let stuckShown=false;
 function stuckHint(){const h=$('hint'),ps=G.tray.concat([G.hold]).filter(Boolean),st=!G.over&&ps.length>0&&!ps.some(canFit);
-  if(st){const rot=G.rot>0&&ps.some(canFitRot);h.innerHTML=rot?'Kein Teil passt so · ein Teil mit ↻ <b>antippen</b> dreht es (↻'+G.rot+')':'Kein Teil passt · das letzte Teil in die <b>Ablage</b> ziehen';h.style.opacity=1;if(!stuckShown)pt('stuck',{rot:G.rot,stage:G.stage});stuckShown=true}
-  else if(stuckShown){h.style.opacity=0;stuckShown=false}}
-function renderOrder(gain){const o=G.order;$('hearts').innerHTML='♥'.repeat(Math.max(0,G.hearts))+'<i>'+'♥'.repeat(3-Math.max(0,G.hearts))+'</i>';
-  $('goals').innerHTML=o.goals.map(g=>{const d=g.have>=g.need;return'<div class="gl'+(d?' done':'')+(gain&&gain[g.c]?' bump2':'')+'" title="'+NAMES[g.c]+'"><span class="ic">'+node({c:g.c})+'</span>'+(d?'✓':g.need-g.have)+'</div>'}).join('');
+  if(st){const rot=G.rot>0&&ps.some(canFitRot);h.innerHTML=rot?'Kein Teil passt so · ein Teil mit ↻ <b>antippen</b> dreht es (↻'+G.rot+')':'Kein Teil passt · das letzte Teil in die <b>Ablage</b> ziehen';h.classList.remove('big');h.style.opacity=1;if(!stuckShown)pt('stuck',{rot:G.rot,stage:G.stage});stuckShown=true}
+  else if(stuckShown){h.style.opacity=0;stuckShown=false;coach()}}
+function renderOrder(gain,pv){const o=G.order;$('hearts').innerHTML='♥'.repeat(Math.max(0,G.hearts))+'<i>'+'♥'.repeat(3-Math.max(0,G.hearts))+'</i>';
+  $('goals').innerHTML=o.goals.map(g=>{const d=g.have>=g.need;return'<div class="gl'+(d?' done':'')+(gain&&gain[g.c]?' bump2':'')+'" title="'+NAMES[g.c]+'"><span class="ic">'+node({c:g.c})+'</span>'+(d?'✓':g.need-g.have)+(pv&&pv[g.c]&&!d?'<i class="pv">−'+Math.min(pv[g.c],g.need-g.have)+'</i>':'')+'</div>'}).join('');
   $('mvN').textContent=Math.max(0,o.left);$('mv').classList.toggle('low',o.left<=3);$('rotN').textContent='↻'+G.rot;
-  $('stageT').textContent='Bestellung '+G.stage;$('sub').textContent=G.over==='x'?'Truffle Box':(G.mode==='tag'?'Tagesschachtel · ':'')+CUST[o.cust]}
+  $('stageT').textContent='Bestellung '+G.stage;$('sub').textContent=G.over==='x'?'Truffle Box':G.mode==='blitz'?'Blitzrunde · noch '+Math.max(0,G.bl)+(G.bl===1?' Zug':' Züge'):(G.mode==='tag'?'Tagesschachtel · ':'')+CUST[o.cust]}
 function setScore(v,bump){G.score=v;const e=$('score');e.textContent=v;
   if(G.mode==='tag'){if(M.daily.d!==G.day)M.daily={d:G.day,best:0};if(v>M.daily.best){M.daily.best=v;saveMeta()}$('best').textContent='Tagesbestwert '+M.daily.best}
+  else if(G.mode==='blitz'){if(v>(M.blitz||0)){M.blitz=v;saveMeta()}$('best').textContent='Blitz-Bestwert '+M.blitz}
   else{if(v>best){best=v;ls('cs_best',best)}$('best').textContent='Bestwert '+best}
   if(bump&&FX){e.classList.add('bump');setTimeout(()=>e.classList.remove('bump'),150)}}
 function renderAll(){applyTheme();renderBoard();renderTray();renderOrder();setScore(G.score)}
@@ -378,7 +404,7 @@ function shake(){if(!FX)return;boxEl.classList.remove('shake');void boxEl.offset
 function burst(x,y,col,n){for(let k=0;k<n;k++){const e=document.createElement('i');e.className='pt';e.style.background=col;e.style.left=x+'px';e.style.top=y+'px';
   const a=Math.random()*Math.PI*2,v=30+Math.random()*80;e.style.setProperty('--dx',Math.cos(a)*v+'px');e.style.setProperty('--dy',(Math.sin(a)*v-30)+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),850)}}
 const PCOL=['#6e4630','#b9733d','#f3e8d0','#f0437a','#8fb842','#f2a730'];   // Hauptfarben der Sprites
-function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#dd8f2a':PCOL[v.c],3)}
+function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#b9691f':PCOL[v.c],3)}
 function confetti(){for(let k=0;k<40;k++)setTimeout(()=>burst(innerWidth*Math.random(),innerHeight*.35*Math.random(),PCOL[(k%4)+2],1),k*14)}
 function buzz(ms){if(!FX)return;try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 
@@ -395,7 +421,11 @@ function sfx(k,x){if(k==='pick')tone(700,.06,'sine',.08,0,1000);
 // ===== Ziehen, Drehen, Ablegen =====
 function preview(pc,r,c){renderBoard();const sim=G.board.slice();
   for(const[dr,dc]of pc.cells){const idx=(r+dr)*N+c+dc;sim[idx]={c:pc.c};cellEls[idx].innerHTML=node({c:pc.c},' ghost')}
-  fullLines(sim).forEach(L=>{const p=isPure(sim,L);L.forEach(i=>{cellEls[i].classList.add('hl');if(p)cellEls[i].classList.add('pure')})})}
+  const L=fullLines(sim),pv={};L.forEach(l=>{const p=isPure(sim,l);if(p)pv[sim[l[0]].c]=(pv[sim[l[0]].c]||0)+l.length;l.forEach(i=>{cellEls[i].classList.add('hl');if(p)cellEls[i].classList.add('pure')})});
+  new Set(L.flat()).forEach(k=>{const v=sim[k];if(v.c!=null)pv[v.c]=(pv[v.c]||0)+1});
+  pvOn=L.length>0;if(pvOn||pvWas)renderOrder(null,pv);pvWas=pvOn}
+let pvOn=false,pvWas=false;
+function clearPv(){if(pvWas){pvWas=false;renderOrder()}}
 slotEls.forEach((slot,i)=>slot.addEventListener('pointerdown',e=>{const pc=i===3?G&&G.hold:G&&G.tray[i];
   if(!G||G.over||drag||!pc)return;e.preventDefault();ac();
   const m=metrics(),el=document.createElement('div');el.id='drag';el.innerHTML=makePiece(pc,m.pitch,m.size);document.body.appendChild(el);slot.classList.add('dragging');
@@ -408,12 +438,12 @@ function move(x,y){const d=drag,left=x-d.w/2,top=y-d.h-d.lift;d.el.style.transfo
   // Solange das Teil selbst noch ganz in der Schachtel liegt, zählt deshalb die Schachtel, nicht die Ablage.
   const hr=holdEl.getBoundingClientRect(),onBoard=r>=0&&c>=0&&r<=R-d.pc.h&&c<=N-d.pc.w,oh=d.i!==3&&!onBoard&&x>=hr.left&&x<=hr.right&&y>=hr.top-10&&y<=hr.bottom+40;
   if(oh!==d.hold){d.hold=oh;holdEl.classList.toggle('tgt',oh)}
-  if(oh){if(d.target){d.target=null;renderBoard()}return}
+  if(oh){if(d.target){d.target=null;renderBoard();clearPv()}return}
   if(d.target&&d.target.r===r&&d.target.c===c)return;
-  if(fits(d.pc,r,c)){d.target={r,c};preview(d.pc,r,c)}else if(d.target){d.target=null;renderBoard()}}
+  if(fits(d.pc,r,c)){d.target={r,c};preview(d.pc,r,c)}else if(d.target){d.target=null;renderBoard();clearPv()}}
 window.addEventListener('pointermove',e=>{if(drag){e.preventDefault();move(e.clientX,e.clientY)}},{passive:false});
 function end(cancel){if(!drag)return;const d=drag;drag=null;d.el.remove();slotEls[d.i].classList.remove('dragging');holdEl.classList.remove('tgt');
-  if(cancel)return renderBoard();
+  clearPv();if(cancel)return renderBoard();
   if(!d.moved){if(performance.now()-d.t0<450)rotate(d.i);return}
   if(d.hold){renderBoard();return toHold(d.i)}
   if(d.target)place(d.i,d.target.r,d.target.c);else renderBoard()}
@@ -422,13 +452,14 @@ window.addEventListener('pointercancel',()=>end(true));
 window.addEventListener('resize',()=>{if(G&&!drag)renderTray()});
 
 // ===== Menü & Dialoge =====
-function showMenu(){document.body.classList.remove('ingame');const run=savedRun('saison'),tag=savedRun('tag'),d=today(),db=M.daily.d===d?M.daily.best:0;
+function showMenu(){document.body.classList.remove('ingame');const run=savedRun('saison'),tag=savedRun('tag'),blz=savedRun('blitz'),d=today(),db=M.daily.d===d?M.daily.best:0;
   const played=M.streak.d===d,pos=roundPos(),nextPos=played?pos:pos%7+1,got=ACH.filter(a=>M.ach[a[0]]).length,st=M.stars||0;
   const dots='<span class="dots">'+'●'.repeat(played?pos:pos%7)+'○'.repeat(7-(played?pos:pos%7))+'</span>';
   $('menuCard').innerHTML='<div class="hero">'+[0,3,5].map(c=>'<span class="hb">'+node({c})+'</span>').join('')+'</div><div class="t">Truffle Box</div><div class="sub" style="margin-top:4px">A Chocolatier\'s Puzzle</div><div class="b" style="margin-top:6px">'+rankOf(M.bestStage)+' · Bestwert '+best+' · Bestellung '+M.bestStage+'</div>'+rankProg()+
    (run?'<button class="btn rose" data-a="cont">Weiterspielen<small>Bestellung '+run.stage+' · '+run.score+' Punkte</small></button>':'')+
    '<button class="btn'+(run?'':' rose')+'" data-a="new">Neue Saison</button>'+
-   '<button class="btn" data-a="tag">Tagesschachtel<small>'+(tag?'fortsetzen · '+tag.score+' Punkte':db?'heute '+db+' Punkte – noch einmal':played?'jeden Tag dieselben Teile für alle':'heute: Tag '+nextPos+' von 7 · '+(nextPos===7?'+5 ★':'+1 ★'))+'</small><small>'+dots+'</small></button>'+
+   '<div class="mini"><button class="btn" data-a="tag" style="font-size:16px">Tagesschachtel<small>'+(tag?'weiter · '+tag.score+' P.':db?'heute '+db+' P.':played?'für alle gleich':'Tag '+nextPos+' von 7 · '+(nextPos===7?'+5 ★':'+1 ★'))+'</small><small>'+dots+'</small></button>'+
+   '<button class="btn" data-a="blitz" style="font-size:16px">Blitzrunde<small>'+(blz?'weiter · '+blz.score+' P.':BLITZ+' Züge auf Punkte')+'</small><small>Bestwert '+(M.blitz||0)+'</small></button></div>'+
    questHtml()+
    '<div class="mini"><button class="btn gh" data-a="ach">Auszeichnungen<small>'+got+' von '+ACH.length+'</small></button><button class="btn gh" data-a="help">Regeln<small>So wird gespielt</small></button>'+
    '<button class="btn gh" data-a="look">Aussehen<small>Schachteln · Förmchen</small></button><button class="btn gh" data-a="more">Mehr<small>Ton · App · Spielstand</small></button></div>';
@@ -492,12 +523,12 @@ function showHelp(){const ic=(v)=>'<span class="demo">'+node(v)+'</span>';
 function showAch(){$('helpCard').innerHTML='<div class="t">Auszeichnungen</div><div class="b" style="margin-bottom:6px">'+ACH.filter(a=>M.ach[a[0]]).length+' von '+ACH.length+'</div>'+
    ACH.map(a=>'<div class="ach'+(M.ach[a[0]]?' on':'')+'"><span class="st">★</span><span><b>'+a[1]+'</b>'+a[2]+'</span></div>').join('')+'<button class="btn rose" data-a="achok">Schließen</button>';
   $('help').classList.remove('hidden');$('helpCard').scrollTop=0}
-function shareText(){return'Truffle Box'+(G.mode==='tag'?' · Tagesschachtel '+G.day.split('-').reverse().join('.'):'')+': '+G.score+' Punkte, Bestellung '+G.stage+''+' – '+location.origin+location.pathname}
-function showOver(){document.body.classList.remove('ingame');const s=G.stats,tag=G.mode==='tag',top=tag?M.daily.best:best;
-  $('overCard').innerHTML='<div class="sub">'+(tag?'Tagesschachtel':'Saison')+'</div><div class="t">'+(G.over==='herz'?'Kundschaft verärgert!':'Schachtel voll!')+'</div>'+
-   '<div class="s">'+G.score+'</div><div class="b">'+(G.score>=top&&G.score>0?'Neuer '+(tag?'Tagesbestwert':'Bestwert')+'!':(tag?'Tagesbestwert ':'Bestwert ')+top)+'</div>'+
-   (G.score<top&&G.score>=top*.75?'<div class="b" style="color:var(--roset);margin-top:6px">Nur '+(top-G.score)+' Punkte bis zum '+(tag?'Tagesbestwert':'Bestwert')+' – noch eine?</div>':'')+
-   '<button class="btn rose" data-a="again">Neue Schachtel</button>'+
+function shareText(){return'Truffle Box'+(G.mode==='blitz'?' · Blitzrunde':G.mode==='tag'?' · Tagesschachtel '+G.day.split('-').reverse().join('.'):'')+': '+G.score+' Punkte, Bestellung '+G.stage+''+' – '+location.origin+location.pathname}
+function showOver(){document.body.classList.remove('ingame');const s=G.stats,tag=G.mode==='tag',bz=G.mode==='blitz',top=tag?M.daily.best:bz?(M.blitz||0):best,bn=tag?'Tagesbestwert':bz?'Blitz-Bestwert':'Bestwert';
+  $('overCard').innerHTML='<div class="sub">'+(tag?'Tagesschachtel':bz?'Blitzrunde':'Saison')+'</div><div class="t">'+(G.over==='herz'?'Kundschaft verärgert!':G.over==='zeit'?'Blitzrunde vorbei!':'Schachtel voll!')+'</div>'+
+   '<div class="s">'+G.score+'</div><div class="b">'+(G.score>=top&&G.score>0?'Neuer '+bn+'!':bn+' '+top)+'</div>'+
+   (G.score<top&&G.score>=top*.75?'<div class="b" style="color:var(--roset);margin-top:6px">Nur '+(top-G.score)+' Punkte bis zum '+bn+' – noch eine?</div>':'')+
+   '<button class="btn rose" data-a="again">'+(bz?'Noch eine Blitzrunde':'Neue Schachtel')+'</button>'+
    '<div class="rows"><div><span>Erreicht</span><b>Bestellung '+G.stage+' · '+s.orders+' geliefert</b></div><div><span>Reihen verpackt</span><b>'+s.lines+(s.pure?' · '+s.pure+' sortenrein':'')+'</b></div><div><span>Rang</span><b>'+rankOf(M.bestStage)+'</b></div></div>'+
    rankProg()+questHtml()+(tag?'<div class="lbl" style="margin-top:8px">Tagesrunde: Tag '+roundPos()+' von 7 · morgen wartet die nächste Tagesschachtel</div>':'')+
    '<div class="mini"><button class="btn gh" data-a="share">Ergebnis teilen</button><button class="btn gh" data-a="menu">Menü</button></div>';
@@ -506,6 +537,7 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a
   if(k==='cont'){G=savedRun('saison');enter()}
   else if(k==='new'){if(savedRun('saison')&&!a.dataset.sure){a.dataset.sure=1;a.innerHTML='Wirklich neu beginnen?<small>Die laufende Saison geht verloren</small>';return}startGame('saison');firstHelp()}
   else if(k==='tag'){const r=savedRun('tag');if(r){G=r;enter()}else startGame('tag');firstHelp()}
+  else if(k==='blitz'){const r=savedRun('blitz');if(r){G=r;enter()}else startGame('blitz');firstHelp()}
   else if(k==='th'){const i=+a.dataset.i;if(M.bestStage<THEMES[i].at)return;M.theme=i;saveMeta();applyTheme();showLook()}
   else if(k==='mute'){M.mute=!M.mute;saveMeta();showMore()}
   else if(k==='look')showLook();
@@ -530,7 +562,7 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a
   else if(k==='helpok'){$('help').classList.add('hidden');M.seenHelp=true;saveMeta()}
   else if(k==='again')startGame(G.mode);
   else if(k==='menu'){$('over').classList.add('hidden');showMenu()}});
-function firstHelp(){if(!M.seenHelp)showHelp()}
+function firstHelp(){if(M.tut<0)M.tut=M.seenHelp?4:0;coach()}
 $('menuBtn').addEventListener('click',()=>{if(drag)return;saveRun();showMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){saveRun();ptFlush()}});
 // Kein Markieren, kein Kontextmenü, keine Vorschau, kein Zoomen – außer im Eingabefeld für den Spielstand-Code
