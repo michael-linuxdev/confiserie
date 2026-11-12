@@ -65,6 +65,14 @@ node tools/playtest.cjs    # Bot-Playtest: Partielänge, Hänger, Ertrag für Ta
 
 Befunde stehen in `docs/playtest/`.
 
+## Lesbarkeit
+
+```sh
+node tools/contrast.cjs    # Textkontraste (Ziel ≥ 4,5) und jede Praline gegen jedes Förmchen (ΔL* Rand / Fläche)
+```
+
+Alle Pralinen tragen eine dunkle Kontur und bekommen im Spiel zusätzlich einen feinen dunklen Rand per CSS; nach Änderungen an Sprites, Förmchen- oder Textfarben das Skript laufen lassen.
+
 ## Schwierigkeit / Balancing
 
 Alle Stellschrauben stehen in `P(s)` in `index.html` (s = Nummer der Bestellung): Sortenzahl, Bestellmenge, Zuglimit, sperrige Teile, Krokant und Eiskonfekt. Wie sich Änderungen auswirken, zeigt eine Bot-Simulation mit der echten Spiellogik:

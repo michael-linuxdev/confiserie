@@ -18,7 +18,7 @@
 @font-face{font-family:Nunito;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
 @font-face{font-family:Nunito;font-style:normal;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-900-normal.woff2) format('woff2')}
 @font-face{font-family:'Playfair Display';font-style:italic;font-weight:700;font-display:swap;src:url(fonts/playfair-display-latin-700-italic.woff2) format('woff2')}
-:root{--rows:8;--rr:1;--sa:calc(env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px));--bw:min(94vw,520px,calc((100vh - 182px - var(--sa))/(var(--rr)*.94 + .36)));--gap:calc(var(--bw)*.008);--cream:#fbeee6;--card:#fffaf4;--ink:#4a2e22;--mut:#8d7163;--box:#6b4430;--box2:#553323;--gold:#c99a3e;--rose:#e0567c;--cf1:#fbf1df;--cf2:#efdfc4;--ck1:#f3e3c6;--ck2:#d6bc93;--ok:#4f9a5d;--line:#efdccb;
+:root{--rows:8;--rr:1;--sa:calc(env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px));--bw:min(94vw,520px,calc((100vh - 182px - var(--sa))/(var(--rr)*.94 + .36)));--gap:calc(var(--bw)*.008);--cream:#fbeee6;--card:#fffaf4;--ink:#4a2e22;--mut:#735648;--goldt:#8a5f10;--roset:#b3305a;--box:#6b4430;--box2:#553323;--gold:#c99a3e;--rose:#e0567c;--cf1:#f8ead0;--cf2:#e8d3ac;--ck1:#ecd6ae;--ck2:#cdab74;--ok:#2c7a41;--line:#efdccb;
   --serif:'Playfair Display',Georgia,serif;--sans:Nunito,system-ui,sans-serif}
 @supports (height:1dvh){:root{--bw:min(94vw,520px,calc((100dvh - 182px - var(--sa))/(var(--rr)*.94 + .36)))}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -47,8 +47,8 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 @keyframes bmp{40%{transform:scale(1.25)}}
 .stat{flex:0 0 auto;text-align:center;line-height:1;border-left:2px solid var(--line);padding-left:9px}
 .stat b{display:block;font-size:22px;font-weight:900}
-.stat small{font-size:10px;color:var(--mut);font-weight:800;letter-spacing:.5px}
-#mv.low b{color:var(--rose);animation:bmp .7s infinite}
+.stat small{font-size:11px;color:var(--mut);font-weight:800;letter-spacing:.5px}
+#mv.low b{color:var(--roset);animation:bmp .7s infinite}
 /* Schachtel */
 .box{position:relative;width:var(--bw);background:linear-gradient(150deg,rgba(255,255,255,.2) 0,rgba(255,255,255,0) 28%,rgba(0,0,0,0) 70%,rgba(0,0,0,.18) 100%),linear-gradient(145deg,var(--box),var(--box2));border-radius:calc(var(--bw)*.05);padding:calc(var(--bw)*.03);box-shadow:0 6px 0 rgba(0,0,0,.18),0 14px 28px rgba(74,46,34,.3),inset 0 0 0 3px var(--gold),inset 0 0 0 5px rgba(0,0,0,.12);transition:background .4s}
 .box.shake{animation:shk .35s}
@@ -61,7 +61,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .cell.hl{--f1:#fff3c4;--f2:#f6d98a;--k1:#f8dc8a;--k2:#e2b548}
 .cell.hl.pure{--f1:#fff;--f2:#ffd6e1;--k1:#ffc1d2;--k2:#ff8fae;box-shadow:0 0 10px #ffb3c8}
 /* Pralinen: Sprites aus sprites/ (tools/make-sprites.mjs), Schatten per CSS */
-.prl,.blk{position:absolute;inset:2%;background:center/contain no-repeat;--sh:drop-shadow(0 2px 2px rgba(40,20,10,.45));filter:var(--sh)}
+.prl,.blk{position:absolute;inset:2%;background:center/contain no-repeat;--sh:drop-shadow(0 0 1px rgba(40,20,10,.7)) drop-shadow(0 2px 2px rgba(40,20,10,.45));filter:var(--sh)}
 .p0{background-image:url(sprites/truffle-dark.webp)}
 .p1{background-image:url(sprites/nougat.webp)}
 .p2{background-image:url(sprites/coconut.webp)}
@@ -71,8 +71,8 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 /* Krokant: blockiert, verschwindet erst wenn seine Reihe verpackt wird */
 .blk{background-image:url(sprites/brittle.webp)}
 .blk.l2{background-image:url(sprites/brittle-gold.webp)}
-.piece .prl,.gl .prl,.demo .prl,.demo .blk{--sh:drop-shadow(0 1px 1px rgba(40,20,10,.45))}
-#drag .prl{--sh:drop-shadow(0 2px 2px rgba(40,20,10,.45))}
+.piece .prl,.gl .prl,.demo .prl,.demo .blk{--sh:drop-shadow(0 0 1px rgba(40,20,10,.7)) drop-shadow(0 1px 1px rgba(40,20,10,.45))}
+#drag .prl{--sh:drop-shadow(0 0 1px rgba(40,20,10,.7)) drop-shadow(0 2px 2px rgba(40,20,10,.45))}
 /* Eiskonfekt: Sorte + Frostring + Zahl; schmilzt nach einigen Zügen zu Krokant */
 .prl[data-t]::after{content:"";position:absolute;inset:-4%;background:url(sprites/frost.webp) center/contain no-repeat}
 .prl[data-t]::before{content:attr(data-t);position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:calc(var(--bw)*.052);color:#fff;
@@ -81,18 +81,18 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 @keyframes hot{50%{filter:drop-shadow(0 0 2px #ff2f6e) drop-shadow(0 0 6px #ff4f84)}}
 .piece .prl[data-t]::before,.demo .prl[data-t]::before{font-size:calc(var(--bw)*.03)}
 #drag .prl[data-t]::before{font-size:calc(var(--bw)*.052)}
-.ghost{opacity:.5}
+.ghost{opacity:.6}
 .pop{animation:pop .38s ease-out forwards}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(0) rotate(80deg);opacity:0}}
 .place{animation:plc .2s ease-out}
 @keyframes plc{from{transform:scale(.65)}to{transform:scale(1)}}
 .melt{animation:mlt .5s ease-out}
-@keyframes mlt{0%{transform:scale(1.5);filter:brightness(2) var(--sh)}100%{transform:scale(1);filter:brightness(1) var(--sh)}}
+@keyframes mlt{0%{transform:scale(1.5);filter:brightness(2)}100%{transform:scale(1);filter:brightness(1)}}
 /* Ablage + Teile */
 .tray{width:var(--bw);flex:0 1 calc(var(--bw)*.42);min-height:calc(var(--bw)*.3);display:flex;align-items:stretch;margin-top:12px;gap:4px}
 .slot{flex:1;position:relative;display:flex;align-items:center;justify-content:center;cursor:grab;border-radius:16px}
 .slot.hold{background:rgba(255,250,244,.7);box-shadow:inset 0 0 0 2px var(--line);margin-right:4px}
-.slot.hold::before{content:"Ablage";position:absolute;top:5px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);font-weight:800}
+.slot.hold::before{content:"Ablage";position:absolute;top:5px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);font-weight:800}
 .slot.hold.tgt{box-shadow:inset 0 0 0 3px var(--gold);background:#fff3d6}
 .piece{position:relative;transition:opacity .2s,filter .2s}
 .piece>div{position:absolute}
@@ -127,7 +127,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .card p{font-size:15px;line-height:1.4;margin:8px 0;text-align:left}
 .btn{display:block;width:100%;font-size:19px;font-weight:900;background:var(--box);color:#fff3dc;border-radius:16px;padding:14px 18px;margin-top:10px;box-shadow:0 4px 0 rgba(0,0,0,.28),inset 0 0 0 2px var(--gold)}
 .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.28),inset 0 0 0 2px var(--gold)}
-.btn.rose{background:var(--rose);box-shadow:0 4px 0 #a8355a}
+.btn.rose{background:#c63a66;box-shadow:0 4px 0 #8f2547}
 .btn.gh{background:#f3e3d6;color:var(--ink);box-shadow:0 4px 0 #dfc6b2;font-size:16px}
 .btn small{display:block;font-size:12px;font-weight:800;opacity:.85}
 .rows{text-align:left;margin:10px 0 2px;font-size:15px}
@@ -151,7 +151,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .mini .btn{font-size:14px;padding:11px 6px;margin-top:8px}
 .qs{background:#fff;border-radius:16px;box-shadow:inset 0 0 0 2px var(--line);padding:9px 12px 7px;margin-top:10px;text-align:left;font-size:14px;line-height:1.25}
 .qs h4{margin:0 0 3px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}
-.qs h4 b{color:var(--gold);font-size:13px;letter-spacing:0}
+.qs h4 b{color:var(--goldt);font-size:13px;letter-spacing:0}
 .q{display:flex;justify-content:space-between;gap:8px;padding:3px 0}.q b{white-space:nowrap}.q.ok{color:var(--ok)}
 .dots{letter-spacing:3px;color:var(--gold)}
 .lbl{font-size:12px;color:var(--mut);font-weight:800}
@@ -222,7 +222,7 @@ function roundPos(){const n=M.streak.n||0;return n?((n-1)%7)+1:0}
 function bumpStreak(){const s=M.streak,d=today();if(s.d===d)return;s.n=(s.n||0)+1;s.d=d;const p=roundPos();addStars(p===7?5:1);saveMeta();pt('round',{n:s.n});
   if(FX)setTimeout(()=>toast(p===7?'Tagesrunde voll! +5 ★':'Tagesrunde: Tag '+p+' von 7 · +1 ★','sm'),700);if(s.n>=3)award('tag3');if(s.n>=7)award('tag7')}
 // Sterne (aus Tageszielen und Tagesrunde) schalten Förmchen frei – rein optisch
-const CUPS=[{n:'Creme',at:0,v:['#fbf1df','#efdfc4','#f3e3c6','#d6bc93']},{n:'Rosé',at:5,v:['#fff3f5','#fbd6de','#f9c6d2','#e497ad']},{n:'Mint',at:12,v:['#f3fbf1','#d5edd3','#cbe8cc','#94c79d']},
+const CUPS=[{n:'Creme',at:0,v:['#f8ead0','#e8d3ac','#ecd6ae','#cdab74']},{n:'Rosé',at:5,v:['#fff3f5','#fbd6de','#f9c6d2','#e497ad']},{n:'Mint',at:12,v:['#f3fbf1','#d5edd3','#cbe8cc','#94c79d']},
   {n:'Himmel',at:25,v:['#f2f8fe','#d3e6f7','#c6def3','#8fb6dc']},{n:'Gold',at:45,v:['#fffae2','#f7e5a6','#f3d98a','#d0a63a']}];
 function addStars(n){const o=M.stars||0;M.stars=o+n;const c=CUPS.find(c=>c.at>o&&c.at<=M.stars);if(c&&FX)setTimeout(()=>toast('Neu: Förmchen „'+c.n+'“','sm'),2600)}
 // Tagesziele: drei pro Tag, für alle gleich (aus dem Datum abgeleitet); Fortschritt zählt über alle Partien des Tages
@@ -494,7 +494,7 @@ function shareText(){return'Truffle Box'+(G.mode==='tag'?' · Tagesschachtel '+G
 function showOver(){document.body.classList.remove('ingame');const s=G.stats,tag=G.mode==='tag',top=tag?M.daily.best:best;
   $('overCard').innerHTML='<div class="sub">'+(tag?'Tagesschachtel':'Saison')+'</div><div class="t">'+(G.over==='herz'?'Kundschaft verärgert!':'Schachtel voll!')+'</div>'+
    '<div class="s">'+G.score+'</div><div class="b">'+(G.score>=top&&G.score>0?'Neuer '+(tag?'Tagesbestwert':'Bestwert')+'!':(tag?'Tagesbestwert ':'Bestwert ')+top)+'</div>'+
-   (G.score<top&&G.score>=top*.75?'<div class="b" style="color:var(--rose);margin-top:6px">Nur '+(top-G.score)+' Punkte bis zum '+(tag?'Tagesbestwert':'Bestwert')+' – noch eine?</div>':'')+
+   (G.score<top&&G.score>=top*.75?'<div class="b" style="color:var(--roset);margin-top:6px">Nur '+(top-G.score)+' Punkte bis zum '+(tag?'Tagesbestwert':'Bestwert')+' – noch eine?</div>':'')+
    '<button class="btn rose" data-a="again">Neue Schachtel</button>'+
    '<div class="rows"><div><span>Erreicht</span><b>Bestellung '+G.stage+' · '+s.orders+' geliefert</b></div><div><span>Reihen verpackt</span><b>'+s.lines+(s.pure?' · '+s.pure+' sortenrein':'')+'</b></div><div><span>Rang</span><b>'+rankOf(M.bestStage)+'</b></div></div>'+
    rankProg()+questHtml()+(tag?'<div class="lbl" style="margin-top:8px">Tagesrunde: Tag '+roundPos()+' von 7 · morgen wartet die nächste Tagesschachtel</div>':'')+

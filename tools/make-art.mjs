@@ -88,17 +88,18 @@ function nougat() {
       <rect x="262" y="270" width="500" height="500" rx="62" fill="none" stroke="#f3c08a" stroke-opacity=".35" stroke-width="6"/>${nut}${gloss(318, 300, 70, 26, -35, .6)}`);
 }
 
+// Kokos: dunkle Kontur und kräftige Flockenränder, damit die weiße Kugel auf hellem Papier nicht verschwindet
 function coconut() {
   const r = rng(11), flakes = [];
   for (let i = 0; i < 300; i++) {
     const a = r() * Math.PI * 2, d = Math.sqrt(r()) * 338, x = 512 + Math.cos(a) * d, y = 512 + Math.sin(a) * d;
-    flakes.push([x, y, 34 + r() * 34, 11 + r() * 8, r() * 180, ['#ffffff', '#fffaf0', '#f6ecd6', '#fffdf7'][Math.floor(r() * 4)]]);
+    flakes.push([x, y, 34 + r() * 34, 11 + r() * 8, r() * 180, ['#ffffff', '#fffdf6', '#f4ead4', '#ffffff'][Math.floor(r() * 4)]]);
   }
   const fl = (attrs, col) => flakes.map(([x, y, w, h, rot, c]) => `<rect x="${f(x - w / 2)}" y="${f(y - h / 2)}" width="${f(w)}" height="${f(h)}" rx="${f(h / 2)}" transform="rotate(${f(rot)} ${f(x)} ${f(y)})" fill="${col || c}" ${attrs}/>`).join('');
-  return `<circle cx="512" cy="512" r="335" fill="#8f7648"/>
-    ${fl('stroke="#8f7648" stroke-width="28"', '#8f7648')}
-    <circle cx="512" cy="512" r="322" fill="#f3e8d0"/>
-    ${fl('stroke="#b39a68" stroke-opacity=".55" stroke-width="3"')}
+  return `<circle cx="512" cy="512" r="340" fill="#4a3418"/>
+    ${fl('stroke="#4a3418" stroke-width="34"', '#4a3418')}
+    <circle cx="512" cy="512" r="322" fill="#fbf6ea"/>
+    ${fl('stroke="#7d6238" stroke-opacity=".7" stroke-width="4"')}
     <circle cx="512" cy="512" r="372" fill="url(#ball)" opacity=".62"/>
     ${gloss(390, 360, 110, 60, -38, .5)}`;
 }
