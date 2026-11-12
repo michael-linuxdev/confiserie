@@ -18,14 +18,15 @@
 @font-face{font-family:Nunito;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
 @font-face{font-family:Nunito;font-style:normal;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-900-normal.woff2) format('woff2')}
 @font-face{font-family:'Playfair Display';font-style:italic;font-weight:700;font-display:swap;src:url(fonts/playfair-display-latin-700-italic.woff2) format('woff2')}
-:root{--bw:min(94vw,52vh,520px);--gap:calc(var(--bw)*.008);--cream:#fbeee6;--card:#fffaf4;--ink:#4a2e22;--mut:#8d7163;--box:#6b4430;--box2:#553323;--gold:#c99a3e;--rose:#e0567c;--cf1:#fbf1df;--cf2:#efdfc4;--ck1:#f3e3c6;--ck2:#d6bc93;--ok:#4f9a5d;--line:#efdccb;
+:root{--rows:10;--rr:1.25;--sa:calc(env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px));--bw:min(94vw,520px,calc((100vh - 182px - var(--sa))/(var(--rr)*.94 + .36)));--gap:calc(var(--bw)*.008);--cream:#fbeee6;--card:#fffaf4;--ink:#4a2e22;--mut:#8d7163;--box:#6b4430;--box2:#553323;--gold:#c99a3e;--rose:#e0567c;--cf1:#fbf1df;--cf2:#efdfc4;--ck1:#f3e3c6;--ck2:#d6bc93;--ok:#4f9a5d;--line:#efdccb;
   --serif:'Playfair Display',Georgia,serif;--sans:Nunito,system-ui,sans-serif}
-@supports (height:1dvh){:root{--bw:min(94vw,52dvh,520px)}}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+@supports (height:1dvh){:root{--bw:min(94vw,520px,calc((100dvh - 182px - var(--sa))/(var(--rr)*.94 + .36)))}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+button{touch-action:manipulation}
 html,body{margin:0;height:100%;color:var(--ink);font-family:var(--sans);font-weight:700;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}
 body{background:radial-gradient(circle at 50% -10%,#fff 0,var(--cream) 42%,#f5dccd 100%);display:flex;flex-direction:column;align-items:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
-header{width:var(--bw);display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 2px 8px}
+header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 2px 8px}
 #menuBtn{width:44px;height:44px;border-radius:50%;background:var(--card);box-shadow:0 2px 0 var(--line);font-size:20px;font-weight:900;flex:0 0 auto}
 .ttl{flex:1;min-width:0;line-height:1.15}
 .ttl small{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -49,10 +50,10 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 .stat small{font-size:10px;color:var(--mut);font-weight:800;letter-spacing:.5px}
 #mv.low b{color:var(--rose);animation:bmp .7s infinite}
 /* Schachtel */
-.box{position:relative;width:var(--bw);aspect-ratio:1/1;background:linear-gradient(150deg,rgba(255,255,255,.2) 0,rgba(255,255,255,0) 28%,rgba(0,0,0,0) 70%,rgba(0,0,0,.18) 100%),linear-gradient(145deg,var(--box),var(--box2));border-radius:calc(var(--bw)*.05);padding:calc(var(--bw)*.03);box-shadow:0 6px 0 rgba(0,0,0,.18),0 14px 28px rgba(74,46,34,.3),inset 0 0 0 3px var(--gold),inset 0 0 0 5px rgba(0,0,0,.12);transition:background .4s}
+.box{position:relative;width:var(--bw);background:linear-gradient(150deg,rgba(255,255,255,.2) 0,rgba(255,255,255,0) 28%,rgba(0,0,0,0) 70%,rgba(0,0,0,.18) 100%),linear-gradient(145deg,var(--box),var(--box2));border-radius:calc(var(--bw)*.05);padding:calc(var(--bw)*.03);box-shadow:0 6px 0 rgba(0,0,0,.18),0 14px 28px rgba(74,46,34,.3),inset 0 0 0 3px var(--gold),inset 0 0 0 5px rgba(0,0,0,.12);transition:background .4s}
 .box.shake{animation:shk .35s}
 @keyframes shk{20%{transform:translateX(-7px)}50%{transform:translateX(6px)}80%{transform:translateX(-3px)}}
-.grid{width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:var(--gap)}
+.grid{width:100%;aspect-ratio:8/var(--rows);display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(var(--rows),1fr);gap:var(--gap)}
 /* Feld = Mulde mit Papierförmchen: Boden, Ausschnitt auf Kreisform, gefältelter Rand */
 .cell{--f1:var(--cf1);--f2:var(--cf2);--k1:var(--ck1);--k2:var(--ck2);position:relative;border-radius:24%;
   background:radial-gradient(circle closest-side,var(--f1) 0 34%,var(--f2) 56%,transparent 58%),radial-gradient(circle closest-side,transparent 0 91%,rgba(0,0,0,.16) 93%,var(--box2) 95%),repeating-conic-gradient(var(--k1) 0 9deg,var(--k2) 9deg 18deg),var(--box2);
@@ -88,7 +89,7 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 .melt{animation:mlt .5s ease-out}
 @keyframes mlt{0%{transform:scale(1.5);filter:brightness(2) var(--sh)}100%{transform:scale(1);filter:brightness(1) var(--sh)}}
 /* Ablage + Teile */
-.tray{width:var(--bw);height:calc(var(--bw)*.34);display:flex;align-items:stretch;margin-top:12px;gap:4px}
+.tray{width:var(--bw);height:calc(var(--bw)*.3);display:flex;align-items:stretch;margin-top:12px;gap:4px}
 .slot{flex:1;position:relative;display:flex;align-items:center;justify-content:center;cursor:grab;border-radius:16px}
 .slot.hold{background:rgba(255,250,244,.7);box-shadow:inset 0 0 0 2px var(--line);margin-right:4px}
 .slot.hold::before{content:"Ablage";position:absolute;top:5px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);font-weight:800}
@@ -108,7 +109,7 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 .piece.spin{animation:spin .22s ease-out}
 @keyframes spin{from{transform:rotate(-90deg) scale(.8)}to{transform:none}}
 #drag{position:fixed;left:0;top:0;pointer-events:none;z-index:10;will-change:transform;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}
-.hint{font-size:14px;line-height:1.35;text-align:center;color:var(--mut);padding:8px 16px 0;max-width:var(--bw);transition:opacity .4s;font-weight:800}
+.hint{margin-bottom:auto;min-height:46px;font-size:14px;line-height:1.35;text-align:center;color:var(--mut);padding:8px 16px 0;max-width:var(--bw);transition:opacity .4s;font-weight:800}
 .toast{position:absolute;left:50%;top:45%;font:italic 700 calc(var(--bw)*.095) var(--serif);color:#fff6dd;text-shadow:0 2px 0 rgba(74,46,34,.8),0 3px 12px rgba(0,0,0,.7);pointer-events:none;white-space:nowrap;animation:tst 1.2s ease-out forwards;z-index:5}
 .toast.sm{font-size:calc(var(--bw)*.06);top:60%}
 .toast.bad{color:#ffc2cf}
@@ -183,7 +184,8 @@ textarea{font:inherit;font-size:13px;width:100%;height:64px;border:2px solid var
 <button id="upd" type="button" hidden>Neue Version – tippen zum Aktualisieren</button>
 <script>
 (function(){
-const N=8,TIMER=9,MAXROT=9;
+const N=8,R=10,TIMER=9,MAXROT=9;   // N Spalten, R Zeilen
+document.documentElement.style.setProperty('--rows',R);document.documentElement.style.setProperty('--rr',R/N);
 const RAW=["X","XX","X\nX","XXX","X\nX\nX","XXXX","X\nX\nX\nX","XXXXX","X\nX\nX\nX\nX","XX\nXX","XXX\nXXX\nXXX",
 "XX\nX.","XX\n.X","X.\nXX",".X\nXX","XXX\nX..","XXX\n..X","X..\nXXX","..X\nXXX","X.\nX.\nXX",".X\n.X\nXX","XX\nX.\nX.","XX\n.X\n.X",
 "XXX\n.X.",".X.\nXXX","X.\nXX\nX.",".X\nXX\n.X","XX.\n.XX",".XX\nXX.","X.\nXX\n.X",".X\nXX\nX.",
@@ -197,7 +199,7 @@ const RANKS=[[1,'Küchenhilfe'],[3,'Lehrling'],[6,'Confiseur'],[9,'Chocolatier']
 const THEMES=[{n:'Klassik',at:1,box:'#6b4430',box2:'#553323',gold:'#c99a3e'},{n:'Rosé',at:4,box:'#b05f77',box2:'#823c52',gold:'#f6d3ae'},{n:'Pistazie',at:8,box:'#62804a',box2:'#425c30',gold:'#e6d58f'},{n:'Mitternacht',at:12,box:'#333a62',box2:'#1e2244',gold:'#dab85e'},{n:'Gold',at:16,box:'#bd8b30',box2:'#8c621b',gold:'#fff2c9'}];
 const $=id=>document.getElementById(id);
 const gridEl=$('grid'),boxEl=$('box'),slotEls=[0,1,2,3].map(i=>document.querySelector('.slot[data-i="'+i+'"]')),holdEl=slotEls[3];
-const cellEls=[];for(let i=0;i<N*N;i++){const d=document.createElement('div');d.className='cell';gridEl.appendChild(d);cellEls.push(d)}
+const cellEls=[];for(let i=0;i<N*R;i++){const d=document.createElement('div');d.className='cell';gridEl.appendChild(d);cellEls.push(d)}
 
 // ===== Speicher =====
 function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
@@ -206,7 +208,8 @@ let best=parseInt(ls('cs_best'))||0;
 function saveMeta(){ls('cs_meta',M)}
 function saveRun(){if(G&&!G.over)ls('cs_run_'+G.mode,G)}
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function savedRun(mode){const r=ls('cs_run_'+mode);if(!r||r.over||!r.board)return null;if(mode==='tag'&&r.day!==today())return null;return r}
+function savedRun(mode){const r=ls('cs_run_'+mode);if(!r||r.over||!r.board)return null;while(r.board.length<N*R)r.board.push(null);   // ältere Partien hatten weniger Zeilen
+  if(mode==='tag'&&r.day!==today())return null;return r}
 const rankOf=s=>RANKS.filter(r=>s>=r[0]).pop()[1];
 // Fortschritt zum nächsten Rang (für Menü und Abrechnung)
 function rankProg(){const nx=RANKS.find(r=>r[0]>M.bestStage);if(!nx)return'';const pv=RANKS.filter(r=>r[0]<=M.bestStage).pop()[0],n=nx[0]-M.bestStage;
@@ -271,13 +274,14 @@ function P(s){const ng=s<=2?1:s<=6?2:3,need=ng===1?Math.min(10+2*s,16):ng===2?Ma
     timer:s<5?0:Math.min(.1+.03*(s-5),.34)}}
 
 // ===== Logik =====
-function fits(pc,r,c){for(const[dr,dc]of pc.cells){const rr=r+dr,cc=c+dc;if(rr<0||cc<0||rr>=N||cc>=N||G.board[rr*N+cc]!=null)return false}return true}
-function canFit(pc){for(let r=0;r<=N-pc.h;r++)for(let c=0;c<=N-pc.w;c++)if(fits(pc,r,c))return true;return false}
+function fits(pc,r,c){for(const[dr,dc]of pc.cells){const rr=r+dr,cc=c+dc;if(rr<0||cc<0||rr>=R||cc>=N||G.board[rr*N+cc]!=null)return false}return true}
+function canFit(pc){for(let r=0;r<=R-pc.h;r++)for(let c=0;c<=N-pc.w;c++)if(fits(pc,r,c))return true;return false}
 function rotated(pc){return{cells:pc.cells.map(([r,c])=>[c,pc.h-1-r]),w:pc.h,h:pc.w,c:pc.c,tm:pc.tm}}
 const key=pc=>pc.cells.map(x=>x[0]*9+x[1]).sort((a,b)=>a-b).join();
 function canFitRot(pc){let p=pc;for(let k=0;k<4;k++){if(canFit(p))return true;p=rotated(p)}return false}
-function fullLines(b){const L=[];for(let i=0;i<N;i++){let rf=true,cf=true;for(let j=0;j<N;j++){if(b[i*N+j]==null)rf=false;if(b[j*N+i]==null)cf=false}
-  if(rf)L.push([...Array(N).keys()].map(j=>i*N+j));if(cf)L.push([...Array(N).keys()].map(j=>j*N+i))}return L}
+function fullLines(b){const L=[];
+  for(let i=0;i<R;i++){let f=true;for(let j=0;j<N;j++)if(b[i*N+j]==null){f=false;break}if(f)L.push([...Array(N).keys()].map(j=>i*N+j))}
+  for(let j=0;j<N;j++){let f=true;for(let i=0;i<R;i++)if(b[i*N+j]==null){f=false;break}if(f)L.push([...Array(R).keys()].map(i=>i*N+j))}return L}
 const isPure=(b,L)=>b[L[0]].c!=null&&L.every(k=>b[k].c===b[L[0]].c);
 function genPiece(){const p=P(G.stage);let pool=TIER[0];if(p.tier>1)pool=pool.concat(TIER[1]);if(p.tier>2)pool=pool.concat(TIER[2]);if(p.tier>3)pool=pool.concat(TIER[2]);
   let si=pool[ri(pool.length)];if(si===0&&G.stage>3&&rnd()<.6)si=pool[ri(pool.length)];
@@ -295,7 +299,7 @@ function isDead(){const tr=G.tray.filter(Boolean),all=G.hold?tr.concat([G.hold])
   return!(!G.hold&&tr.length===1)}   // letztes Teil in die leere Ablage legen bringt neue Teile
 
 function startGame(mode){const d=today();
-  G={mode,day:d,rs:mode==='tag'?(parseInt(d.replace(/-/g,''))*2654435761)|0:(Math.random()*2**32)|0,board:Array(N*N).fill(null),tray:[],hold:null,score:0,streak:0,stage:1,hearts:3,rot:3,order:null,
+  G={mode,day:d,rs:mode==='tag'?(parseInt(d.replace(/-/g,''))*2654435761)|0:(Math.random()*2**32)|0,board:Array(N*R).fill(null),tray:[],hold:null,score:0,streak:0,stage:1,hearts:3,rot:3,order:null,
     stats:{moves:0,lines:0,pure:0,orders:0,melted:0,saved:0},over:false,ts:Date.now()};
   newOrder();G.tray=newTray();M.games++;saveMeta();saveRun();pt('start',{mode});enter()}
 function enter(){$('menu').classList.add('hidden');$('over').classList.add('hidden');document.body.classList.add('ingame');
@@ -305,7 +309,7 @@ function place(i,r,c){const pc=i===3?G.hold:G.tray[i],placed=new Set(),b=G.board
   pc.cells.forEach(([dr,dc],k)=>{const idx=(r+dr)*N+c+dc;b[idx]=k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c};placed.add(idx)});
   if(i===3)G.hold=null;else G.tray[i]=null;G.stats.moves++;
   const lines=fullLines(b),n=lines.length,cleared=new Map(),gain={};let pure=0,saved=0,empty=false;
-  lines.forEach(L=>{if(isPure(b,L)){pure++;gain[b[L[0]].c]=(gain[b[L[0]].c]||0)+N}});
+  lines.forEach(L=>{if(isPure(b,L)){pure++;gain[b[L[0]].c]=(gain[b[L[0]].c]||0)+L.length}});
   new Set(lines.flat()).forEach(k=>{const v=b[k];cleared.set(k,v);if(v.b){b[k]=v.b>1?{b:v.b-1}:null}else{gain[v.c]=(gain[v.c]||0)+1;if(v.t!=null)saved++;b[k]=null}});
   // Eiskonfekt tickt – bei 0 schmilzt es zu Krokant
   const melted=new Set();b.forEach((v,k)=>{if(v&&v.t!=null&&!placed.has(k)&&--v.t<=0){b[k]={b:G.stage>=10?2:1};melted.add(k)}});
@@ -346,7 +350,7 @@ function rotate(i){const pc=i===3?G.hold:G.tray[i];if(!pc)return;const r=rotated
 function metrics(){const r=gridEl.getBoundingClientRect(),gap=parseFloat(getComputedStyle(gridEl).columnGap)||0,pitch=(r.width+gap)/N;return{r,gap,pitch,size:pitch-gap}}
 function node(v,cls){if(v.b)return'<span class="blk'+(v.b>1?' l2':'')+(cls||'')+'"></span>';
   return'<span class="prl p'+v.c+(v.t!=null&&v.t<=3?' hot':'')+(cls||'')+'"'+(v.t!=null?' data-t="'+v.t+'"':'')+'></span>'}
-function renderBoard(cleared,placed,melted,newBlk){for(let i=0;i<N*N;i++){const v=G.board[i],el=cellEls[i];el.className='cell';
+function renderBoard(cleared,placed,melted,newBlk){for(let i=0;i<N*R;i++){const v=G.board[i],el=cellEls[i];el.className='cell';
   el.innerHTML=v?node(v,placed&&placed.has(i)?' place':(melted&&melted.has(i))||(newBlk&&newBlk.has(i))?' melt':''):cleared&&cleared.has(i)?node(cleared.get(i),' pop'):''}}
 function makePiece(pc,pitch,size){let h='<div class="piece" style="width:'+((pc.w-1)*pitch+size)+'px;height:'+((pc.h-1)*pitch+size)+'px">';
   pc.cells.forEach(([r,c],k)=>h+='<div style="left:'+c*pitch+'px;top:'+r*pitch+'px;width:'+size+'px;height:'+size+'px">'+node(k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c})+'</div>');return h+'</div>'}
@@ -527,11 +531,13 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a
 function firstHelp(){if(!M.seenHelp)showHelp()}
 $('menuBtn').addEventListener('click',()=>{if(drag)return;saveRun();showMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){saveRun();ptFlush()}});
+// Kein Markieren, kein Kontextmenü, keine Vorschau, kein Zoomen – außer im Eingabefeld für den Spielstand-Code
+['contextmenu','selectstart','dragstart','gesturestart','gesturechange','dblclick'].forEach(t=>document.addEventListener(t,e=>{if(!(e.target&&e.target.tagName==='TEXTAREA'))e.preventDefault()},{passive:false}));
 setInterval(ptFlush,15000);
 window.addEventListener('error',e=>pt('err',{m:String(e.message).slice(0,160),l:e.lineno}));
 
 // Für Tests und tools/balance.cjs
-window.__cs={get G(){return G},set fx(v){FX=v},P,place,toHold,rotate,fits,canFit,fullLines,isPure,startGame,metrics,M};
+window.__cs={N,R,get G(){return G},set fx(v){FX=v},P,place,toHold,rotate,fits,canFit,fullLines,isPure,startGame,metrics,M};
 
 // Sprites schon im Menü laden und dekodieren, damit beim ersten Zug nichts nachlädt: ein unsichtbares
 // Element mit denselben Klassen – so holt der Browser genau die Bilder, die das CSS später braucht.
@@ -540,7 +546,7 @@ window.__cs={get G(){return G},set fx(v){FX=v},P,place,toHold,rotate,fits,canFit
 
 applyTheme();
 // Hintergrund hinter dem Menü: letzte Partie oder eine leere Schachtel
-G=savedRun('saison')||{mode:'saison',board:Array(N*N).fill(null),tray:[],hold:null,score:0,stage:1,hearts:3,rot:3,order:{cust:0,goals:[],left:0},stats:{moves:0},over:'x'};
+G=savedRun('saison')||{mode:'saison',board:Array(N*R).fill(null),tray:[],hold:null,score:0,stage:1,hearts:3,rot:3,order:{cust:0,goals:[],left:0},stats:{moves:0},over:'x'};
 renderAll();showMenu();gateInit();
 (function(){const p=platform(),o={os:p.os,b:p.b,sa:standalone()?1:0,w:innerWidth,h:innerHeight,games:M.games,best:M.bestStage};
   const go=v=>pt('session',Object.assign(o,{v}));try{caches.keys().then(k=>go((k.find(x=>x.indexOf('confiserie-')===0)||'').slice(11)),()=>go(''))}catch(e){go('')}})();

@@ -1,6 +1,6 @@
 # Truffle Box
 
-*A Chocolatier's Puzzle* – ein Puzzle als installierbare PWA: Pralinen-Teile in eine 8×8-Schachtel ziehen, volle Reihen und Spalten werden verpackt. Die Kundschaft bestellt bestimmte Sorten mit Zuglimit; jede gelieferte Bestellung macht die nächste schwerer.
+*A Chocolatier's Puzzle* – ein Puzzle als installierbare PWA: Pralinen-Teile in eine Schachtel mit 8 Spalten und 10 Zeilen ziehen, volle Reihen und Spalten werden verpackt. Die Kundschaft bestellt bestimmte Sorten mit Zuglimit; jede gelieferte Bestellung macht die nächste schwerer.
 
 - **Bestellungen:** Sorten sammeln, bevor die Züge ausgehen – sonst kostet es ein ♥ (drei pro Partie).
 - **Sortenrein:** Eine Reihe aus nur einer Sorte zählt doppelt.
@@ -46,6 +46,10 @@ npx serve -l 8080
 Dann http://localhost:8080 öffnen. Der Service Worker wird nur unter `https:` bzw. `localhost` registriert; über `file://` läuft das Spiel ohne ihn.
 
 Weil der Service Worker cache-first arbeitet, siehst du Änderungen lokal erst, wenn du in `sw.js` die `VERSION` änderst (danach erscheint im Spiel „Neue Version – tippen zum Aktualisieren“) oder in den DevTools unter *Application → Service Workers* „Update on reload“ aktivierst.
+
+## Layout
+
+Die Schachtel hat 8 Spalten und 10 Zeilen (`N` und `R` in `index.html`) und nutzt hohe Handy-Bildschirme aus: Die Breite `--bw` richtet sich nach der Bildschirmbreite und danach, dass Kopf, Bestellung, Schachtel, Teile und Hinweis in die Höhe passen (Safe Areas eingerechnet). Markieren, Kopieren, Kontextmenü, Vorschau und Zoomen sind im Spiel gesperrt – außer im Eingabefeld für den Spielstand-Code. Gespeicherte Partien aus der 8×8-Zeit werden unten um zwei leere Zeilen ergänzt.
 
 ## Installationshinweis
 

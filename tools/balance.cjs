@@ -19,15 +19,15 @@ const RUNS = +process.argv[2] || 150;
   const page = await browser.newPage();
   await page.goto('file://' + path.join(__dirname, '..', 'index.html'));
   const out = await page.evaluate((RUNS) => {
-    const cs = window.__cs, N = 8; cs.fx = false;
+    const cs = window.__cs, N = cs.N || 8, ROWS = cs.R || N; cs.fx = false;
     function pick() { const G = cs.G; let best = null;
       G.tray.forEach((pc, i) => { if (!pc) return;
-        for (let r = 0; r <= N - pc.h; r++) for (let c = 0; c <= N - pc.w; c++) { if (!cs.fits(pc, r, c)) continue;
+        for (let r = 0; r <= ROWS - pc.h; r++) for (let c = 0; c <= N - pc.w; c++) { if (!cs.fits(pc, r, c)) continue;
           const sim = G.board.slice(); pc.cells.forEach(([a, b]) => sim[(r + a) * N + c + b] = { c: pc.c });
-          const L = cs.fullLines(sim), gain = {}; L.forEach(l => { if (cs.isPure(sim, l)) gain[sim[l[0]].c] = (gain[sim[l[0]].c] || 0) + N; });
+          const L = cs.fullLines(sim), gain = {}; L.forEach(l => { if (cs.isPure(sim, l)) gain[sim[l[0]].c] = (gain[sim[l[0]].c] || 0) + l.length; });
           new Set(L.flat()).forEach(k => { const v = sim[k]; if (v.c != null) gain[v.c] = (gain[v.c] || 0) + 1; });
           let g = 0; G.order.goals.forEach(o => g += Math.min(Math.max(0, o.need - o.have), gain[o.c] || 0));
-          let adj = 0; pc.cells.forEach(([a, b]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => { const R = r + a + dr, C = c + b + dc; if (R < 0 || C < 0 || R >= N || C >= N || sim[R * N + C] != null) adj += .5; }));
+          let adj = 0; pc.cells.forEach(([a, b]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => { const R = r + a + dr, C = c + b + dc; if (R < 0 || C < 0 || R >= ROWS || C >= N || sim[R * N + C] != null) adj += .5; }));
           const sc = g * 10 + L.length * 6 + adj + Math.random();
           if (!best || sc > best.sc) best = { i, r, c, sc }; } });
       return best; }
