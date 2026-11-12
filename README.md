@@ -1,6 +1,6 @@
 # Truffle Box
 
-*A Chocolatier's Puzzle* – ein Puzzle als installierbare PWA: Pralinen-Teile in eine Schachtel mit 8 Spalten und 10 Zeilen ziehen, volle Reihen und Spalten werden verpackt. Die Kundschaft bestellt bestimmte Sorten mit Zuglimit; jede gelieferte Bestellung macht die nächste schwerer.
+*A Chocolatier's Puzzle* – ein Puzzle als installierbare PWA: Pralinen-Teile in eine 8×8-Schachtel ziehen, volle Reihen und Spalten werden verpackt. Die Kundschaft bestellt bestimmte Sorten mit Zuglimit; jede gelieferte Bestellung macht die nächste schwerer.
 
 - **Bestellungen:** Sorten sammeln, bevor die Züge ausgehen – sonst kostet es ein ♥ (drei pro Partie).
 - **Sortenrein:** Eine Reihe aus nur einer Sorte zählt doppelt.
@@ -49,7 +49,7 @@ Weil der Service Worker cache-first arbeitet, siehst du Änderungen lokal erst, 
 
 ## Layout
 
-Die Schachtel hat 8 Spalten und 10 Zeilen (`N` und `R` in `index.html`) und nutzt hohe Handy-Bildschirme aus: Die Breite `--bw` richtet sich nach der Bildschirmbreite und danach, dass Kopf, Bestellung, Schachtel, Teile und Hinweis in die Höhe passen (Safe Areas eingerechnet). Markieren, Kopieren, Kontextmenü, Vorschau und Zoomen sind im Spiel gesperrt – außer im Eingabefeld für den Spielstand-Code. Gespeicherte Partien aus der 8×8-Zeit werden unten um zwei leere Zeilen ergänzt.
+Die Schachtel hat 8×8 Felder (`N` Spalten, `R` Zeilen in `index.html`; ein Versuch mit 10 Zeilen wurde zurückgenommen). Ihre Breite `--bw` richtet sich nach der Bildschirmbreite und danach, dass Kopf, Bestellung, Schachtel, Teile und Hinweis in die Höhe passen (Safe Areas eingerechnet); auf hohen Bildschirmen wird die Teile-Ablage höher und der Inhalt steht mittig. Markieren, Kopieren, Kontextmenü, Vorschau und Zoomen sind im Spiel gesperrt – außer im Eingabefeld für den Spielstand-Code.
 
 ## Installationshinweis
 
