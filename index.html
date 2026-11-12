@@ -403,9 +403,11 @@ slotEls.forEach((slot,i)=>slot.addEventListener('pointerdown',e=>{const pc=i===3
   move(e.clientX,e.clientY)}));
 function move(x,y){const d=drag,left=x-d.w/2,top=y-d.h-d.lift;d.el.style.transform='translate('+left+'px,'+top+'px)';
   if(!d.moved){if(Math.hypot(x-d.x0,y-d.y0)<8)return;d.moved=true;sfx('pick')}
-  const hr=holdEl.getBoundingClientRect(),oh=d.i!==3&&x>=hr.left&&x<=hr.right&&y>=hr.top-10&&y<=hr.bottom+40;
-  if(oh!==d.hold){d.hold=oh;holdEl.classList.toggle('tgt',oh)}
   const c=Math.round((left-d.m.r.left)/d.m.pitch),r=Math.round((top-d.m.r.top)/d.m.pitch);
+  // Das Teil schwebt über dem Finger: Für die unteren Reihen links liegt der Finger schon auf der Ablage.
+  // Solange das Teil selbst noch ganz in der Schachtel liegt, zählt deshalb die Schachtel, nicht die Ablage.
+  const hr=holdEl.getBoundingClientRect(),onBoard=r>=0&&c>=0&&r<=R-d.pc.h&&c<=N-d.pc.w,oh=d.i!==3&&!onBoard&&x>=hr.left&&x<=hr.right&&y>=hr.top-10&&y<=hr.bottom+40;
+  if(oh!==d.hold){d.hold=oh;holdEl.classList.toggle('tgt',oh)}
   if(oh){if(d.target){d.target=null;renderBoard()}return}
   if(d.target&&d.target.r===r&&d.target.c===c)return;
   if(fits(d.pc,r,c)){d.target={r,c};preview(d.pc,r,c)}else if(d.target){d.target=null;renderBoard()}}
