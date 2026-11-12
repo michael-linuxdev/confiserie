@@ -217,8 +217,8 @@ function startGame(mode){const d=today();
   G={mode,day:d,rs:mode==='tag'?(parseInt(d.replace(/-/g,''))*2654435761)|0:(Math.random()*2**32)|0,board:Array(N*N).fill(null),tray:[],hold:null,score:0,streak:0,stage:1,hearts:3,rot:3,order:null,
     stats:{moves:0,lines:0,pure:0,orders:0,melted:0},over:false};
   newOrder();G.tray=newTray();M.games++;saveMeta();saveRun();enter()}
-function enter(){$('menu').classList.add('hidden');$('over').classList.add('hidden');document.body.classList.add('ingame');renderAll();
-  $('hint').style.opacity=G.stats.moves<4?1:0;$('hint').innerHTML='Teile in die Schachtel ziehen · <b>Antippen</b> dreht ein Teil (↻)'}
+function enter(){$('menu').classList.add('hidden');$('over').classList.add('hidden');document.body.classList.add('ingame');
+  $('hint').style.opacity=G.stats.moves<4?1:0;$('hint').innerHTML='Teile in die Schachtel ziehen · <b>Antippen</b> dreht ein Teil (↻)';stuckShown=false;renderAll()}
 
 function place(i,r,c){const pc=i===3?G.hold:G.tray[i],placed=new Set(),b=G.board;
   pc.cells.forEach(([dr,dc],k)=>{const idx=(r+dr)*N+c+dc;b[idx]=k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c};placed.add(idx)});
@@ -271,7 +271,12 @@ function makePiece(pc,pitch,size){let h='<div class="piece" style="width:'+((pc.
   pc.cells.forEach(([r,c],k)=>h+='<div style="left:'+c*pitch+'px;top:'+r*pitch+'px;width:'+size+'px;height:'+size+'px">'+node(k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c})+'</div>');return h+'</div>'}
 function renderTray(){const m=metrics(),sw=slotEls[0].getBoundingClientRect().width;slotEls.forEach((s,i)=>{const pc=i===3?G.hold:G.tray[i];s.classList.remove('nofit','dragging','tgt');
   const k=pc?Math.min(.7,sw*.94/(Math.max(pc.w,pc.h)*m.pitch)):0;   // kleine Teile größer zeigen, lange passen trotzdem in den Platz
-  s.innerHTML=pc?makePiece(pc,m.pitch*k,m.size*k):'';if(pc&&!canFit(pc))s.classList.add('nofit')})}
+  s.innerHTML=pc?makePiece(pc,m.pitch*k,m.size*k):'';if(pc&&!canFit(pc))s.classList.add('nofit')});stuckHint()}
+// Passt kein Teil so, wie es liegt, sagt der Hinweis, was noch geht (drehen oder Ablage) – sonst wirkt das Spiel eingefroren.
+let stuckShown=false;
+function stuckHint(){const h=$('hint'),ps=G.tray.concat([G.hold]).filter(Boolean),st=!G.over&&ps.length>0&&!ps.some(canFit);
+  if(st){const rot=G.rot>0&&ps.some(canFitRot);h.innerHTML=rot?'Kein Teil passt so · ein graues Teil <b>antippen</b> dreht es (↻'+G.rot+')':'Kein Teil passt · das letzte Teil in die <b>Ablage</b> ziehen';h.style.opacity=1;stuckShown=true}
+  else if(stuckShown){h.style.opacity=0;stuckShown=false}}
 function renderOrder(gain){const o=G.order;$('hearts').innerHTML='♥'.repeat(Math.max(0,G.hearts))+'<i>'+'♥'.repeat(3-Math.max(0,G.hearts))+'</i>';
   $('goals').innerHTML=o.goals.map(g=>{const d=g.have>=g.need;return'<div class="gl'+(d?' done':'')+(gain&&gain[g.c]?' bump2':'')+'" title="'+NAMES[g.c]+'"><span class="ic">'+node({c:g.c})+'</span>'+(d?'✓':g.need-g.have)+'</div>'}).join('');
   $('mvN').textContent=Math.max(0,o.left);$('mv').classList.toggle('low',o.left<=3);$('rotN').textContent='↻'+G.rot;
