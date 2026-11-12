@@ -9,6 +9,8 @@
 - **Krokant** blockiert Felder, **Eiskonfekt** schmilzt nach 9 Zügen zu Krokant.
 - **Tagesschachtel:** jeden Tag dieselbe Teilefolge für alle, eigener Bestwert.
 - **Ränge und Schachtel-Designs** werden über die höchste erreichte Bestellung freigeschaltet.
+- **Tagesserie und Auszeichnungen:** Tage in Folge mit der Tagesschachtel zählen als Serie; elf Auszeichnungen für besondere Züge und Meilensteine. Beides liegt in `cs_meta`.
+- **Ergebnis teilen:** nach der Partie als Text über das Teilen-Menü des Geräts bzw. die Zwischenablage.
 - Laufende Partien werden gespeichert und beim nächsten Öffnen fortgesetzt.
 
 Live: https://confiserie.micana.de
