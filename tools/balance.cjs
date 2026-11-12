@@ -1,74 +1,54 @@
 #!/usr/bin/env node
-// Kalibriert die Zuglimits (MOVES in index.html) per Bot-Simulation.
+// Misst per Bot-Simulation, wie schwer die Bestellungen sind (Zuglimit in P() in index.html).
 //
-//   node tools/balance.cjs            Tabelle + Vorschlag für MOVES ausgeben
-//   node tools/balance.cjs --check    Gewinnquoten mit den aktuell eingetragenen MOVES prüfen
+//   node tools/balance.cjs
 //
-// Braucht Playwright (npm i -D playwright). Das Spiel wird per file:// geladen und die echte
-// Spiellogik (initLevel, refill, scoreLines …) benutzt – nur das Legen übernimmt ein Bot.
+// Braucht Playwright (npm i -D playwright). Das Spiel wird per file:// geladen und über
+// window.__cs mit der echten Spiellogik gespielt. Der Bot wertet jeden möglichen Zug aus
+// (ein Zug Vorausschau), nutzt aber weder Ablage noch Drehen und plant keine sortenreinen
+// Reihen – ein Mensch, der das tut, kommt weiter.
 //
-// Zwei Bots:
-//   planer   wertet jeden möglichen Zug nach Gewinn für die Bestellung aus (ein Zug Vorausschau)
-//   casual   legt "wo es passt" und nimmt Reihen mit, achtet aber nicht auf Sorten
-// Das Limit wird so gesetzt, dass der Planer ein Level in etwa target(n) der Versuche schafft.
-// Läuft die Schachtel voll ("voll %"), zählt der Versuch als verloren, geht aber nicht ins Limit ein.
-// Beide Bots planen keine sortenreinen Reihen und keine Doppel-Reihen im Voraus – wer das tut,
-// kommt mit weniger Zügen aus. Genau dieser Abstand ist der Spielraum für die Sterne.
+// Ausgabe je Bestellung: wie viele Partien sie erreichen, wie oft sie geliefert wird,
+// wie oft sie platzt (♥ weg) und Züge-pro-Praline (Grundlage für die Faktoren in P()).
 const { chromium } = require('playwright');
 const path = require('path');
-
-const LEVELS = 40, RUNS = 60;
+const RUNS = +process.argv[2] || 150;
 
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.goto('file://' + path.join(__dirname, '..', 'index.html'));
-  const out = await page.evaluate(({ LEVELS, RUNS, check }) => {
-    clearTimeout(idleT);
-    const adj = (tmp, pc, r, c) => { let s = 0; pc.sh.forEach(([a, b]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => { const R = r + a + dr, C = c + b + dc; if (R < 0 || C < 0 || R >= N || C >= N || tmp[R][C] !== -1) s += .5; })); return s; };
-    function pick(planner) {
-      let best = null;
-      G.tray.forEach((pc, k) => { if (!pc) return;
-        for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) { if (!fitsAt(pc, r, c)) continue;
-          const tmp = G.grid.map(x => x.slice()); pc.sh.forEach(([a, b]) => tmp[r + a][c + b] = pc.t);
-          const sl = scoreLines(tmp); let sc = adj(tmp, pc, r, c) + Math.random();
-          if (planner) { let g = 0; G.goals.forEach(o => g += Math.min(Math.max(0, o.need - o.have), sl.gain[o.t] || 0)); sc += g * 10 + sl.lines.length * 4 + bonusMoves(sl.lines.length) * 25; }
-          else sc += sl.lines.length * 10;
-          if (!best || sc > best.sc) best = { k, r, c, sc }; } });
-      return best;
+  const out = await page.evaluate((RUNS) => {
+    const cs = window.__cs, N = 8; cs.fx = false;
+    function pick() { const G = cs.G; let best = null;
+      G.tray.forEach((pc, i) => { if (!pc) return;
+        for (let r = 0; r <= N - pc.h; r++) for (let c = 0; c <= N - pc.w; c++) { if (!cs.fits(pc, r, c)) continue;
+          const sim = G.board.slice(); pc.cells.forEach(([a, b]) => sim[(r + a) * N + c + b] = { c: pc.c });
+          const L = cs.fullLines(sim), gain = {}; L.forEach(l => { if (cs.isPure(sim, l)) gain[sim[l[0]].c] = (gain[sim[l[0]].c] || 0) + N; });
+          new Set(L.flat()).forEach(k => { const v = sim[k]; if (v.c != null) gain[v.c] = (gain[v.c] || 0) + 1; });
+          let g = 0; G.order.goals.forEach(o => g += Math.min(Math.max(0, o.need - o.have), gain[o.c] || 0));
+          let adj = 0; pc.cells.forEach(([a, b]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => { const R = r + a + dr, C = c + b + dc; if (R < 0 || C < 0 || R >= N || C >= N || sim[R * N + C] != null) adj += .5; }));
+          const sc = g * 10 + L.length * 6 + adj + Math.random();
+          if (!best || sc > best.sc) best = { i, r, c, sc }; } });
+      return best; }
+    const st = {};
+    const rec = s => st[s] || (st[s] = { reached: 0, done: 0, failed: 0, ratio: [] });
+    const scores = [], stages = [], ends = {};
+    for (let k = 0; k < RUNS; k++) {
+      cs.startGame('saison'); document.getElementById('help').classList.add('hidden');
+      let G = cs.G, stage = 1, used = 0, hearts = 3; rec(1).reached++;
+      while (!G.over) { const m = pick(); if (!m) break; const total = G.order.goals.reduce((a, o) => a + o.need, 0); cs.place(m.i, m.r, m.c); used++;
+        if (G.stage > stage) { rec(stage).done++; rec(stage).ratio.push(used / total); stage = G.stage; used = 0; rec(stage).reached++; }
+        else if (G.hearts < hearts) { rec(stage).failed++; used = 0; }
+        hearts = G.hearts; }
+      scores.push(G.score); stages.push(G.stage); ends[G.over] = (ends[G.over] || 0) + 1;
     }
-    // Liefert die netto verbrauchten Züge bis zum Sieg (geschenkte Züge abgezogen), Infinity wenn die Schachtel vollläuft.
-    function sim(n, planner) {
-      initLevel(n); let used = 0, bonus = 0, peak = 0;
-      while (used < 150) {
-        const m = pick(planner); if (!m) return Infinity;
-        const pc = G.tray[m.k]; pc.sh.forEach(([a, b]) => G.grid[m.r + a][m.c + b] = pc.t); G.tray[m.k] = null; used++;
-        peak = Math.max(peak, used - bonus);
-        const sl = scoreLines(G.grid);
-        if (sl.lines.length) { G.goals.forEach(o => { if (sl.gain[o.t]) o.have += sl.gain[o.t]; }); sl.seen.forEach(key => G.grid[Math.floor(key / N)][key % N] = -1); bonus += bonusMoves(sl.lines.length); }
-        if (G.goals.every(o => o.have >= o.need)) return { peak, left: bonus - used };
-        if (G.tray.every(x => !x)) refill();
-      }
-      return Infinity;
-    }
-    const target = n => n <= 1 ? 1 : n === 2 ? .9 : n <= 5 ? .7 : params(n).hard ? .45 : .6;
-    const rows = [], moves = [];
-    for (let n = 1; n <= LEVELS; n++) {
-      const run = pl => [...Array(RUNS)].map(() => sim(n, pl));
-      const A = run(true), B = run(false), pk = x => x === Infinity ? Infinity : x.peak;
-      const sorted = A.map(pk).sort((a, b) => a - b), fin = sorted.filter(isFinite);
-      const M0 = fin[Math.min(fin.length - 1, Math.ceil(target(n) * fin.length) - 1)];
-      let M = check ? params(n).moves : M0;
-      if (n === 1 && !check) M += 4;
-      const p = params(n), s3 = check ? p.s3 : Math.max(2, Math.round(M * .15));
-      const rate = (X, lim) => Math.round(X.filter(x => pk(x) <= lim).length / RUNS * 100);
-      const star3 = Math.round(A.filter(x => x !== Infinity && x.peak <= M && M + x.left >= s3).length / RUNS * 100);
-      moves.push(M);
-      rows.push({ n, types: p.types, goals: p.ng + '×' + p.amt, clutter: p.clutter, median: fin[Math.floor(fin.length / 2)], M, 'planer %': rate(A, M), 'planer ★★★ %': star3, 'casual %': rate(B, M), 'voll %': Math.round(A.filter(x => x === Infinity).length / RUNS * 100) });
-    }
-    return { rows, moves };
-  }, { LEVELS, RUNS, check: process.argv.includes('--check') });
+    const med = a => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
+    const rows = Object.keys(st).map(Number).sort((a, b) => a - b).filter(s => st[s].reached >= RUNS * .05).map(s => { const x = st[s], p = cs.P(s);
+      return { bestellung: s, sorten: p.colors, ziele: p.ng + '×' + p.need, limit: p.moves, 'erreicht %': Math.round(x.reached / RUNS * 100), 'geliefert %': Math.round(x.done / x.reached * 100), 'geplatzt je Partie': +(x.failed / x.reached).toFixed(2), 'Züge/Praline (Median)': x.ratio.length ? +med(x.ratio).toFixed(2) : '-' }; });
+    return { rows, medScore: med(scores), medStage: med(stages), maxStage: Math.max(...stages), ends };
+  }, RUNS);
   console.table(out.rows);
-  console.log('const MOVES=[' + out.moves.join(',') + '];');
+  console.log(`Bot: Median ${out.medScore} Punkte, Median Bestellung ${out.medStage}, Maximum Bestellung ${out.maxStage}; Ende: ${JSON.stringify(out.ends)}`);
   await browser.close();
 })();

@@ -1,10 +1,19 @@
 # Confiserie Sommer
 
-Ein Puzzle als installierbare PWA: Du legst Pralinen-Teile in eine 8×8-Schachtel; volle Reihen und Spalten werden verpackt und zählen auf die Bestellung der Kundschaft. Mit den verdienten Sternen renovierst du Omas Laden.
+Ein Puzzle als installierbare PWA: Pralinen-Teile in eine 8×8-Schachtel ziehen, volle Reihen und Spalten werden verpackt. Die Kundschaft bestellt bestimmte Sorten mit Zuglimit; jede gelieferte Bestellung macht die nächste schwerer.
+
+- **Bestellungen:** Sorten sammeln, bevor die Züge ausgehen – sonst kostet es ein ♥ (drei pro Partie).
+- **Sortenrein:** Eine Reihe aus nur einer Sorte zählt doppelt.
+- **Drehen:** Teil antippen; Drehungen sind eine knappe Ressource.
+- **Ablage:** Ein Teil zurücklegen oder tauschen.
+- **Krokant** blockiert Felder, **Eiskonfekt** schmilzt nach 9 Zügen zu Krokant.
+- **Tagesschachtel:** jeden Tag dieselbe Teilefolge für alle, eigener Bestwert.
+- **Ränge und Schachtel-Designs** werden über die höchste erreichte Bestellung freigeschaltet.
+- Laufende Partien werden gespeichert und beim nächsten Öffnen fortgesetzt.
 
 Live: https://confiserie.micana.de
 
-Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Der Spielstand liegt im `localStorage` (Key `cs_test`).
+Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Spielstände liegen im `localStorage`: `cs_best` (Bestwert), `cs_meta` (Rang, Design, Einstellungen), `cs_run_saison` und `cs_run_tag` (laufende Partien).
 
 ## Aufbau
 
@@ -33,15 +42,14 @@ Weil der Service Worker cache-first arbeitet, siehst du Änderungen lokal erst, 
 
 ## Schwierigkeit / Balancing
 
-Jedes Level hat ein Zuglimit (`MOVES` in `index.html`). Sterne gibt es für übrig gebliebene Züge, zwei Reihen auf einmal schenken einen Zug, und pro Level gibt es nur eine Rettung. Die Limits stammen aus Bot-Simulationen mit der echten Spiellogik:
+Alle Stellschrauben stehen in `P(s)` in `index.html` (s = Nummer der Bestellung): Sortenzahl, Bestellmenge, Zuglimit, sperrige Teile, Krokant und Eiskonfekt. Wie sich Änderungen auswirken, zeigt eine Bot-Simulation mit der echten Spiellogik:
 
 ```sh
-npm i -D playwright          # einmalig
-node tools/balance.cjs          # Tabelle + Vorschlag für MOVES
-node tools/balance.cjs --check  # Gewinnquoten mit den eingetragenen MOVES
+npm i -D playwright       # einmalig
+node tools/balance.cjs    # je Bestellung: erreicht %, geliefert %, geplatzt
 ```
 
-Wer `params()` ändert (Sorten, Bestellmengen, Schokobruch, Teile), sollte danach `MOVES` neu erzeugen. Leichter oder schwerer wird das ganze Spiel über `target(n)` im Skript.
+Der Bot wertet jeden Zug aus, nutzt aber weder Ablage noch Drehen; er kommt im Median bis Bestellung 6. Wer plant, kommt weiter.
 
 ## Icons neu erzeugen
 
@@ -49,7 +57,7 @@ Wer `params()` ändert (Sorten, Bestellmengen, Schokobruch, Teile), sollte danac
 node tools/make-icons.mjs
 ```
 
-Das Skript zeichnet die Erdbeer-Herz-Praline (`prShape` Typ 1) auf cremefarbenem Grund und schreibt 192, 512, 512 maskable, apple-touch-icon (180) und favicon nach `icons/`. Es braucht nur Node, keine Pakete.
+Das Skript zeichnet die Herz-Praline aus dem ersten Prototyp auf cremefarbenem Grund und schreibt 192, 512, 512 maskable, apple-touch-icon (180) und favicon nach `icons/`. Es braucht nur Node, keine Pakete.
 
 ## Deployment
 
