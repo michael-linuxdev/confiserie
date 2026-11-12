@@ -56,38 +56,34 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 .cell{position:relative;border-radius:24%;background:radial-gradient(circle at 50% 55%,#f3e4cd 0 50%,#e0cbab 52% 100%);box-shadow:inset 0 2px 3px rgba(74,46,34,.22);transition:background .12s}
 .cell.hl{background:radial-gradient(circle at 50% 55%,#fbe7ad 0 50%,#e9c46a 52% 100%)}
 .cell.hl.pure{background:radial-gradient(circle at 50% 55%,#fff 0 46%,#ff9db8 52% 100%);box-shadow:0 0 10px #ffb3c8}
-.prl{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle at 34% 28%,var(--l) 0 14%,var(--b) 56%,var(--d) 100%);box-shadow:0 2px 3px rgba(0,0,0,.35),inset 0 -2px 3px rgba(0,0,0,.18)}
-.prl::after{content:"";position:absolute}
-.p0{--l:#8a5a42;--b:#4a2a1c;--d:#2a160d;--deco:#b98a66}
-.p0::after{left:22%;right:22%;top:44%;height:12%;border-radius:4px;background:var(--deco)}
-.p1{--l:#e6b587;--b:#a4673e;--d:#6b3c22;border-radius:30%}
-.p1::after{inset:33%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f7e2c0,#c4935a)}
-.p2{--l:#fffdf6;--b:#f1e5cb;--d:#c9b086;--deco:#b98f52}
-.p2::after{inset:22%;border-radius:50%;border:2px dotted var(--deco)}
-.p3{--l:#ffd3dc;--b:#dd6c87;--d:#a23c56;--deco:#fff0f3;border-radius:34%}
-.p3::after{inset:35%;background:var(--deco);transform:rotate(45deg);border-radius:14%}
-.p4{--l:#e3f0c0;--b:#93b25e;--d:#587430;--deco:#f4f8e8}
-.p4::after{inset:17%;border-radius:50%;background:repeating-linear-gradient(45deg,transparent 0 20%,var(--deco) 20% 31%,transparent 31% 50%);opacity:.85}
-.p5{--l:#fbdfa8;--b:#d08f3c;--d:#8a571b;--deco:#6b3c1c;border-radius:30%}
-.p5::after{inset:25%;border-radius:50%;border:2px solid var(--deco)}
-/* Eiskonfekt: schmilzt nach einigen Zügen zu Krokant */
-.prl[data-t]{box-shadow:0 0 0 2px #bfe9ff,0 0 9px #7fd0ff,0 2px 3px rgba(0,0,0,.35)}
-.prl[data-t]::after{display:none}
-.prl[data-t]::before{content:attr(data-t);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:calc(var(--bw)*.052);color:#fff;text-shadow:0 1px 3px #000,0 0 6px rgba(0,0,0,.6)}
-.prl.hot{animation:hot .7s infinite}
-@keyframes hot{50%{box-shadow:0 0 0 3px #ff8fa8,0 0 12px #ff4f84}}
-.piece .prl[data-t]::before{font-size:calc(var(--bw)*.026)}
-#drag .prl[data-t]::before{font-size:calc(var(--bw)*.052)}
+/* Pralinen: Sprites aus sprites/ (tools/make-sprites.mjs), Schatten per CSS */
+.prl,.blk{position:absolute;inset:2%;background:center/contain no-repeat;--sh:drop-shadow(0 2px 2px rgba(40,20,10,.45));filter:var(--sh)}
+.p0{background-image:url(sprites/truffle-dark.webp)}
+.p1{background-image:url(sprites/nougat.webp)}
+.p2{background-image:url(sprites/coconut.webp)}
+.p3{background-image:url(sprites/raspberry.webp)}
+.p4{background-image:url(sprites/pistachio.webp)}
+.p5{background-image:url(sprites/caramel.webp)}
 /* Krokant: blockiert, verschwindet erst wenn seine Reihe verpackt wird */
-.blk{position:absolute;inset:6%;border-radius:20%;background:radial-gradient(circle at 30% 30%,#f1c98a 0 9%,transparent 10%),radial-gradient(circle at 68% 42%,#f1c98a 0 8%,transparent 9%),radial-gradient(circle at 42% 72%,#f1c98a 0 9%,transparent 10%),linear-gradient(135deg,#b07a3f,#74451b);box-shadow:0 2px 3px rgba(0,0,0,.35),inset 0 0 0 2px rgba(0,0,0,.2)}
-.blk.l2{box-shadow:0 2px 3px rgba(0,0,0,.35),inset 0 0 0 3px #f6dfa8,inset 0 0 0 5px rgba(0,0,0,.25)}
+.blk{background-image:url(sprites/brittle.webp)}
+.blk.l2{background-image:url(sprites/brittle-gold.webp)}
+.piece .prl,.gl .prl,.demo .prl,.demo .blk{--sh:drop-shadow(0 1px 1px rgba(40,20,10,.45))}
+#drag .prl{--sh:drop-shadow(0 2px 2px rgba(40,20,10,.45))}
+/* Eiskonfekt: Sorte + Frostring + Zahl; schmilzt nach einigen Zügen zu Krokant */
+.prl[data-t]::after{content:"";position:absolute;inset:-4%;background:url(sprites/frost.webp) center/contain no-repeat}
+.prl[data-t]::before{content:attr(data-t);position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:calc(var(--bw)*.052);color:#fff;
+  background:radial-gradient(circle,rgba(16,42,74,.62) 0 21%,rgba(16,42,74,0) 34%);text-shadow:0 1px 2px #06182e,0 0 5px #06182e}
+.prl.hot{animation:hot .7s infinite}
+@keyframes hot{50%{filter:drop-shadow(0 0 2px #ff2f6e) drop-shadow(0 0 6px #ff4f84)}}
+.piece .prl[data-t]::before,.demo .prl[data-t]::before{font-size:calc(var(--bw)*.03)}
+#drag .prl[data-t]::before{font-size:calc(var(--bw)*.052)}
 .ghost{opacity:.5}
 .pop{animation:pop .38s ease-out forwards}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(0) rotate(80deg);opacity:0}}
 .place{animation:plc .2s ease-out}
 @keyframes plc{from{transform:scale(.65)}to{transform:scale(1)}}
 .melt{animation:mlt .5s ease-out}
-@keyframes mlt{0%{transform:scale(1.5);filter:brightness(2)}100%{transform:scale(1)}}
+@keyframes mlt{0%{transform:scale(1.5);filter:brightness(2) var(--sh)}100%{transform:scale(1);filter:brightness(1) var(--sh)}}
 /* Ablage + Teile */
 .tray{width:var(--bw);height:calc(var(--bw)*.34);display:flex;align-items:stretch;margin-top:12px;gap:4px}
 .slot{flex:1;position:relative;display:flex;align-items:center;justify-content:center;cursor:grab;border-radius:16px}
@@ -290,8 +286,8 @@ function toast(txt,cls){const t=document.createElement('div');t.className='toast
 function shake(){if(!FX)return;boxEl.classList.remove('shake');void boxEl.offsetWidth;boxEl.classList.add('shake')}
 function burst(x,y,col,n){for(let k=0;k<n;k++){const e=document.createElement('i');e.className='pt';e.style.background=col;e.style.left=x+'px';e.style.top=y+'px';
   const a=Math.random()*Math.PI*2,v=30+Math.random()*80;e.style.setProperty('--dx',Math.cos(a)*v+'px');e.style.setProperty('--dy',(Math.sin(a)*v-30)+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),850)}}
-const PCOL=['#6b4430','#b9773f','#f4e8cd','#e0567c','#93b25e','#d9983f'];
-function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#b07a3f':PCOL[v.c],3)}
+const PCOL=['#6e4630','#b9733d','#f3e8d0','#f0437a','#8fb842','#f2a730'];   // Hauptfarben der Sprites
+function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#dd8f2a':PCOL[v.c],3)}
 function confetti(){for(let k=0;k<40;k++)setTimeout(()=>burst(innerWidth*Math.random(),innerHeight*.35*Math.random(),PCOL[(k%4)+2],1),k*14)}
 function buzz(ms){if(!FX)return;try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 
@@ -377,6 +373,11 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)saveRun()})
 
 // Für Tests und tools/balance.cjs
 window.__cs={get G(){return G},set fx(v){FX=v},P,place,toHold,rotate,fits,canFit,fullLines,isPure,startGame,metrics,M};
+
+// Sprites schon im Menü laden und dekodieren, damit beim ersten Zug nichts nachlädt: ein unsichtbares
+// Element mit denselben Klassen – so holt der Browser genau die Bilder, die das CSS später braucht.
+(function(){const d=document.createElement('div');d.setAttribute('aria-hidden','true');d.style.cssText='position:fixed;left:-99px;top:0;width:8px;height:8px;opacity:.01;pointer-events:none';
+  let h='';for(let c=0;c<6;c++)h+=node(c?{c}:{c,t:9});d.innerHTML=h+node({b:1})+node({b:2});document.body.appendChild(d)})();
 
 applyTheme();
 // Hintergrund hinter dem Menü: letzte Partie oder eine leere Schachtel

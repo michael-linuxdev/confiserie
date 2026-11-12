@@ -19,6 +19,15 @@ const ASSETS = [
   'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png',
   'icons/favicon.png',
+  'sprites/truffle-dark.webp',
+  'sprites/nougat.webp',
+  'sprites/coconut.webp',
+  'sprites/raspberry.webp',
+  'sprites/pistachio.webp',
+  'sprites/caramel.webp',
+  'sprites/brittle.webp',
+  'sprites/brittle-gold.webp',
+  'sprites/frost.webp',
 ];
 
 self.addEventListener('install', (e) => {

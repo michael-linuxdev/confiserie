@@ -26,7 +26,7 @@ jobs:
       - name: Build site
         run: |
           mkdir _site
-          cp -r index.html manifest.webmanifest sw.js fonts icons CNAME .nojekyll _site/
+          cp -r index.html manifest.webmanifest sw.js fonts icons sprites CNAME .nojekyll _site/
           # Cache-Version des Service Workers = Commit-Hash, damit jeder Deploy als neue Version erkannt wird
           sed -i "s/^const VERSION = 'dev';/const VERSION = '${GITHUB_SHA::8}';/" _site/sw.js
           grep -q "const VERSION = '${GITHUB_SHA::8}';" _site/sw.js

@@ -3,6 +3,7 @@
   "private": true,
   "description": "Truffle Box – statische PWA ohne Build-Schritt. Die Pakete hier brauchen nur die Skripte in tools/.",
   "scripts": {
+    "art": "node tools/make-art.mjs",
     "sprites": "node tools/make-sprites.mjs",
     "icons": "node tools/make-icons.mjs"
   },

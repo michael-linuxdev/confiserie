@@ -24,7 +24,7 @@ Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe R
 | `manifest.webmanifest` | PWA-Manifest |
 | `fonts/` | Nunito 700/800/900, Playfair Display Italic 700 (SIL OFL 1.1, Lizenztexte liegen bei) |
 | `icons/` | App-Icons, erzeugt mit `tools/make-icons.mjs` |
-| `art/source/` | Gemalte Quellbilder (PNG, 1024 px) für Sprites und Icon |
+| `art/source/` | Quellbilder (PNG, 1024 px) für Sprites und Icon, gezeichnet von `tools/make-art.mjs` |
 | `sprites/` | Pralinen-Sprites (WebP, 256 px), erzeugt mit `tools/make-sprites.mjs` |
 | `tools/` | Hilfsskripte; ihre Pakete stehen als devDependencies in `package.json` |
 | `.github/workflows/pages.yml` | Deployment auf GitHub Pages |
@@ -60,9 +60,12 @@ Das Spiel selbst braucht keine Pakete. Nur die Skripte in `tools/` nutzen [sharp
 
 ```sh
 npm i                         # einmalig
+node tools/make-art.mjs       # zeichnet art/source/*.png (nur nötig, wenn die Motive geändert werden)
 node tools/make-sprites.mjs   # art/source/*.png  -> sprites/*.webp
 node tools/make-icons.mjs     # art/source/icon.png -> icons/*.png
 ```
+
+Die Quellbilder sind Vektor-Illustrationen, die `make-art.mjs` per Code zeichnet und zu PNG rendert – alle mit demselben Aufbau, Licht von links oben und demselben Pinsel-Filter. Wer stattdessen gemalte Bilder verwenden möchte, legt sie unter denselben Namen nach `art/source/` und startet nur die beiden anderen Skripte.
 
 Quellbilder in `art/source/` (PNG, quadratisch, mind. 1024 px, transparenter Hintergrund – außer `icon.png`):
 
@@ -73,7 +76,7 @@ Quellbilder in `art/source/` (PNG, quadratisch, mind. 1024 px, transparenter Hin
 | `frost.png` | Frostring, liegt beim Eiskonfekt über der Sorte |
 | `icon.png` | App-Icon, deckend auf `#fbeee6` |
 
-`make-sprites.mjs` schneidet jedes Motiv auf seinen Inhalt zu, skaliert alle Pralinen auf dieselbe deckende Fläche (so wirken Herz, Blatt und Quadrat gleich groß), setzt sie mittig auf 256×256 und schreibt WebP mit Alpha. Es bricht mit Fehler ab, wenn ein Bild fehlt, keinen transparenten Hintergrund hat, eine Datei über 40 KB oder alle zusammen über 350 KB liegen. Schlagschatten gehören nicht ins Bild; die setzt das Spiel per CSS.
+`make-sprites.mjs` schneidet jedes Motiv auf seinen Inhalt zu, skaliert alle Pralinen auf dieselbe deckende Fläche (so wirken Herz, Blatt und Quadrat gleich groß), setzt sie mittig auf 256×256 und schreibt WebP mit Alpha. Es bricht mit Fehler ab, wenn ein Bild fehlt, keinen transparenten Hintergrund hat, eine Datei über 40 KB oder alle zusammen über 350 KB liegen. Schlagschatten gehören nicht ins Bild; die setzt das Spiel per CSS. Die Sprites sind per `background-image` an die Klassen `.p0`–`.p5`, `.blk` und `.blk.l2` gebunden; neue Dateien müssen zusätzlich in `ASSETS` in `sw.js` stehen.
 
 `make-icons.mjs` schreibt 192, 512, 512 maskable (Motiv in der Safe Zone), apple-touch-icon (180) und favicon (48) nach `icons/`, alle deckend.
 

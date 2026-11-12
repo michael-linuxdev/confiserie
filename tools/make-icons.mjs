@@ -47,6 +47,6 @@ for (const [name, size, scale] of ICONS) {
   const s = Math.round(size * scale), a = Math.floor((size - s) / 2), b = size - s - a;
   await sharp(flat).resize(s, s, { kernel: 'lanczos3' })
     .extend({ left: a, top: a, right: b, bottom: b, background: BG })
-    .png({ compressionLevel: 9 }).toFile(join(OUT, name));
+    .png({ compressionLevel: 9, palette: true, quality: 92, effort: 10 }).toFile(join(OUT, name)); // Palette: deckend und deutlich kleiner
   console.log(`icons/${name}  ${size}x${size}`);
 }
