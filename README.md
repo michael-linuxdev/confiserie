@@ -1,10 +1,10 @@
 # Confiserie Sommer
 
-Ein Echtzeit-Puzzle als installierbare PWA: Pralinen rollen über Schokoladen-Rinnen, du stellst die Weichen und lenkst jede Sorte in die passende Bestellschachtel. Zwischen den Leveln renovierst du Omas Laden.
+Ein Puzzle als installierbare PWA: Du legst Pralinen-Teile in eine 8×8-Schachtel; volle Reihen und Spalten werden verpackt und zählen auf die Bestellung der Kundschaft. Mit den verdienten Sternen renovierst du Omas Laden.
 
 Live: https://confiserie.micana.de
 
-Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Der Spielstand liegt im `localStorage` (Key `cs_proto`).
+Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Der Spielstand liegt im `localStorage` (Key `cs_test`).
 
 ## Aufbau
 
@@ -13,7 +13,7 @@ Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe R
 | `index.html` | Spiel (HTML, CSS, JS in einer Datei) |
 | `sw.js` | Service Worker: Cache-first für alle App-Dateien |
 | `manifest.webmanifest` | PWA-Manifest |
-| `fonts/` | Nunito 600/800/900, Playfair Display Italic 700 (SIL OFL 1.1, Lizenztexte liegen bei) |
+| `fonts/` | Nunito 700/800/900, Playfair Display Italic 700 (SIL OFL 1.1, Lizenztexte liegen bei) |
 | `icons/` | App-Icons, erzeugt mit `tools/make-icons.mjs` |
 | `.github/workflows/pages.yml` | Deployment auf GitHub Pages |
 

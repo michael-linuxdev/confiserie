@@ -10,7 +10,7 @@ const ASSETS = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'fonts/nunito-latin-600-normal.woff2',
+  'fonts/nunito-latin-700-normal.woff2',
   'fonts/nunito-latin-800-normal.woff2',
   'fonts/nunito-latin-900-normal.woff2',
   'fonts/playfair-display-latin-700-italic.woff2',
