@@ -403,8 +403,8 @@ function toast(txt,cls){const t=document.createElement('div');t.className='toast
 function shake(){if(!FX)return;boxEl.classList.remove('shake');void boxEl.offsetWidth;boxEl.classList.add('shake')}
 function burst(x,y,col,n){for(let k=0;k<n;k++){const e=document.createElement('i');e.className='pt';e.style.background=col;e.style.left=x+'px';e.style.top=y+'px';
   const a=Math.random()*Math.PI*2,v=30+Math.random()*80;e.style.setProperty('--dx',Math.cos(a)*v+'px');e.style.setProperty('--dy',(Math.sin(a)*v-30)+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),850)}}
-const PCOL=['#6e4630','#b9733d','#f3e8d0','#f0437a','#8fb842','#f2a730'];   // Hauptfarben der Sprites
-function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#b9691f':PCOL[v.c],3)}
+const PCOL=['#562d20','#a05a2c','#ead7ae','#e8408a','#7fb43f','#e08a1f'];   // Hauptfarben der Sprites
+function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#6a3418':PCOL[v.c],3)}
 function confetti(){for(let k=0;k<40;k++)setTimeout(()=>burst(innerWidth*Math.random(),innerHeight*.35*Math.random(),PCOL[(k%4)+2],1),k*14)}
 function buzz(ms){if(!FX)return;try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 

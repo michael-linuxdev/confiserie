@@ -1,10 +1,10 @@
 # Prompts für gemalte Pralinen
 
 Zehn Bilder, PNG, quadratisch, mindestens 1024×1024. Alle außer `icon.png` mit **transparentem
-Hintergrund**. Fertige Dateien unter genau diesen Namen nach `art/source/` legen, dann:
+Hintergrund** oder auf einfarbigem Magenta. Fertige Dateien unter genau diesen Namen nach `art/raw/` legen, dann:
 
 ```sh
-node tools/make-sprites.mjs && node tools/make-icons.mjs && node tools/contrast.cjs
+node tools/import-art.mjs art/raw && node tools/make-sprites.mjs && node tools/make-icons.mjs && node tools/contrast.cjs
 ```
 
 (`tools/make-art.mjs` nicht mehr starten – es würde die Bilder mit den gezeichneten überschreiben.)

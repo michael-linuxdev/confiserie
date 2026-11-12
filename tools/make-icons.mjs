@@ -20,12 +20,12 @@ const OUT = process.argv[3] || join(ROOT, 'icons');
 const BG = { r: 0xfb, g: 0xee, b: 0xe6 }; // --cream, wie background_color im Manifest
 
 // scale: Anteil der Kante, den das Quellbild einnimmt; der Rest wird mit BG aufgefüllt.
-// Maskable: Das Bild liegt komplett in den mittleren 80 % – Android beschneidet auf einen
-// Kreis mit 40 % Radius (Safe Zone), die Bildecken sind ohnehin Hintergrund.
+// Maskable: Android beschneidet auf einen Kreis mit 40 % Radius (Safe Zone). Ein Motiv mit Rand
+// ringsum kann mit scale .8 verkleinert werden; ein randfüllendes Bild bleibt bei 1.
 const ICONS = [
   ['icon-192.png', 192, 1],
   ['icon-512.png', 512, 1],
-  ['icon-maskable-512.png', 512, .8],
+  ['icon-maskable-512.png', 512, 1],   // das gemalte Icon ist randfüllend; das Herz liegt in der Safe Zone, ein Verkleinern würde die angeschnittene Schachtel als Kante zeigen
   ['apple-touch-icon.png', 180, 1],
   ['favicon.png', 48, 1],
 ];
@@ -47,6 +47,6 @@ for (const [name, size, scale] of ICONS) {
   const s = Math.round(size * scale), a = Math.floor((size - s) / 2), b = size - s - a;
   await sharp(flat).resize(s, s, { kernel: 'lanczos3' })
     .extend({ left: a, top: a, right: b, bottom: b, background: BG })
-    .png({ compressionLevel: 9, palette: true, quality: 92, effort: 10 }).toFile(join(OUT, name)); // Palette: deckend und deutlich kleiner
+    .png({ compressionLevel: 9, palette: true, quality: 80, effort: 10 }).toFile(join(OUT, name)); // Palette: deckend und deutlich kleiner
   console.log(`icons/${name}  ${size}x${size}`);
 }

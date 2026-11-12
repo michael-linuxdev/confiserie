@@ -30,7 +30,8 @@ Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe R
 | `manifest.webmanifest` | PWA-Manifest |
 | `fonts/` | Nunito 700/800/900, Playfair Display Italic 700 (SIL OFL 1.1, Lizenztexte liegen bei) |
 | `icons/` | App-Icons, erzeugt mit `tools/make-icons.mjs` |
-| `art/source/` | Quellbilder (PNG, 1024 px) für Sprites und Icon, gezeichnet von `tools/make-art.mjs` |
+| `art/raw/` | Gemalte Rohbilder aus einem Bildgenerator, so wie geliefert (Magenta-Hintergrund) |
+| `art/source/` | Freigestellte Quellbilder (PNG, 1024 px) für Sprites und Icon, erzeugt von `tools/import-art.mjs` |
 | `art/PROMPTS.md` | Prompts, um die Quellbilder mit einem Bildgenerator als gemalte Fassung zu erzeugen |
 | `sprites/` | Pralinen-Sprites (WebP, 256 px), erzeugt mit `tools/make-sprites.mjs` |
 | `tools/` | Hilfsskripte; ihre Pakete stehen als devDependencies in `package.json` |
@@ -93,12 +94,12 @@ Das Spiel selbst braucht keine Pakete. Nur die Skripte in `tools/` nutzen [sharp
 
 ```sh
 npm i                         # einmalig
-node tools/make-art.mjs       # zeichnet art/source/*.png (nur nötig, wenn die Motive geändert werden)
+node tools/import-art.mjs art/raw   # stellt die gemalten Rohbilder frei -> art/source/*.png
 node tools/make-sprites.mjs   # art/source/*.png  -> sprites/*.webp
 node tools/make-icons.mjs     # art/source/icon.png -> icons/*.png
 ```
 
-Die Quellbilder sind Vektor-Illustrationen, die `make-art.mjs` per Code zeichnet und zu PNG rendert – alle mit demselben Aufbau, Licht von links oben und demselben Pinsel-Filter. Wer stattdessen gemalte Bilder verwenden möchte, legt sie unter denselben Namen nach `art/source/` und startet nur die beiden anderen Skripte.
+Die Pralinen sind gemalte Bilder aus einem Bildgenerator (Prompts in `art/PROMPTS.md`), geliefert auf Magenta-Hintergrund. `import-art.mjs` entfernt den Hintergrund von außen her (zusammenhängende Fläche, kein Farbschlüssel – Rosa im Motiv bleibt) und passt drei Motive fürs Spiel an: Die Pistazie wird grün eingefärbt (sonst wäre sie die vierte braune Praline), die Kokoskugel bekommt eine dunkle Kontur (sonst verschwindet sie auf dem hellen Papier), und der Frostring wird aufgeweitet, damit Sorte und Zahl sichtbar bleiben. `tools/make-art.mjs` zeichnet weiterhin die frühere Vektor-Fassung, überschreibt dabei aber `art/source/`.
 
 Quellbilder in `art/source/` (PNG, quadratisch, mind. 1024 px, transparenter Hintergrund – außer `icon.png`):
 
