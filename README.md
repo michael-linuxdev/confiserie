@@ -9,13 +9,15 @@
 - **Krokant** blockiert Felder, **Eiskonfekt** schmilzt nach 9 Zügen zu Krokant.
 - **Tagesschachtel:** jeden Tag dieselbe Teilefolge für alle, eigener Bestwert.
 - **Ränge und Schachtel-Designs** werden über die höchste erreichte Bestellung freigeschaltet.
-- **Tagesserie und Auszeichnungen:** Tage in Folge mit der Tagesschachtel zählen als Serie; elf Auszeichnungen für besondere Züge und Meilensteine. Beides liegt in `cs_meta`.
+- **Tagesrunde:** Jeder Tag mit der Tagesschachtel zählt weiter (7 Tage = eine Runde, +1 ★ je Tag, +5 ★ am siebten). Ein verpasster Tag setzt nichts zurück.
+- **Tagesziele:** drei pro Tag, für alle gleich; Fortschritt zählt über alle Partien des Tages. Jedes Ziel bringt 1 ★, alle drei zusammen 2 ★ extra.
+- **Sterne ★** schalten Förmchen-Farben frei (5, 12, 25, 45) – rein optisch. Dazu elf **Auszeichnungen**.
 - **Ergebnis teilen:** nach der Partie als Text über das Teilen-Menü des Geräts bzw. die Zwischenablage.
 - Laufende Partien werden gespeichert und beim nächsten Öffnen fortgesetzt.
 
 Live: https://confiserie.micana.de
 
-Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Spielstände liegen im `localStorage`: `cs_best` (Bestwert), `cs_meta` (Rang, Design, Einstellungen), `cs_run_saison` und `cs_run_tag` (laufende Partien).
+Das Spiel ist eine einzige statische Seite ohne Build-Schritt und ohne externe Requests – es läuft nach dem ersten Aufruf komplett offline. Spielstände liegen im `localStorage`: `cs_best` (Bestwert), `cs_meta` (Rang, Design, Einstellungen, Sterne, Tagesziele, Tagesrunde, Auszeichnungen), `cs_run_saison` und `cs_run_tag` (laufende Partien). Dazu `cs_playtest` (Testprotokoll) und `cs_install_skip` (Zeitpunkt von „Im Browser weiterspielen“).
 
 ## Aufbau
 
@@ -44,6 +46,20 @@ npx serve -l 8080
 Dann http://localhost:8080 öffnen. Der Service Worker wird nur unter `https:` bzw. `localhost` registriert; über `file://` läuft das Spiel ohne ihn.
 
 Weil der Service Worker cache-first arbeitet, siehst du Änderungen lokal erst, wenn du in `sw.js` die `VERSION` änderst (danach erscheint im Spiel „Neue Version – tippen zum Aktualisieren“) oder in den DevTools unter *Application → Service Workers* „Update on reload“ aktivierst.
+
+## Installationshinweis
+
+Im Handy-Browser erscheint beim Start ein Vollbild-Hinweis mit der passenden Anleitung (iPhone/Android, je Browser; auf Android mit „Jetzt installieren“, sobald der Browser es anbietet). „Im Browser weiterspielen“ gilt 6 Stunden. Der Hinweis erscheint nie in der installierten App, nie am Computer und nie in automatisierten Browsern – zum Ansehen `?installGate=1` anhängen. Auf dem iPhone haben Safari und die installierte App getrennte Speicher; der Spielstand lässt sich als Code mitnehmen (Menü → Mehr → Spielstand mitnehmen).
+
+## Testprotokoll und Playtest
+
+Das Spiel schreibt Ereignisse (Sitzung, Partie, Bestellung, Drehen, Ablage, Hänger, Tagesziel, Installationshinweis, Fehler) nur auf dem Gerät mit, höchstens 3000 Einträge. Nichts wird gesendet. Unter Menü → Mehr lässt es sich abschalten, leeren und als `.jsonl` exportieren.
+
+```sh
+node tools/playtest.cjs    # Bot-Playtest: Partielänge, Hänger, Ertrag für Tagesziele, Layout-Messung
+```
+
+Befunde stehen in `docs/playtest/`.
 
 ## Schwierigkeit / Balancing
 

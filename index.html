@@ -18,7 +18,7 @@
 @font-face{font-family:Nunito;font-style:normal;font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
 @font-face{font-family:Nunito;font-style:normal;font-weight:900;font-display:swap;src:url(fonts/nunito-latin-900-normal.woff2) format('woff2')}
 @font-face{font-family:'Playfair Display';font-style:italic;font-weight:700;font-display:swap;src:url(fonts/playfair-display-latin-700-italic.woff2) format('woff2')}
-:root{--bw:min(94vw,52vh,520px);--gap:calc(var(--bw)*.008);--cream:#fbeee6;--card:#fffaf4;--ink:#4a2e22;--mut:#8d7163;--box:#6b4430;--box2:#553323;--gold:#c99a3e;--rose:#e0567c;--ok:#4f9a5d;--line:#efdccb;
+:root{--bw:min(94vw,52vh,520px);--gap:calc(var(--bw)*.008);--cream:#fbeee6;--card:#fffaf4;--ink:#4a2e22;--mut:#8d7163;--box:#6b4430;--box2:#553323;--gold:#c99a3e;--rose:#e0567c;--cf1:#fbf1df;--cf2:#efdfc4;--ck1:#f3e3c6;--ck2:#d6bc93;--ok:#4f9a5d;--line:#efdccb;
   --serif:'Playfair Display',Georgia,serif;--sans:Nunito,system-ui,sans-serif}
 @supports (height:1dvh){:root{--bw:min(94vw,52dvh,520px)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -54,7 +54,7 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 @keyframes shk{20%{transform:translateX(-7px)}50%{transform:translateX(6px)}80%{transform:translateX(-3px)}}
 .grid{width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:var(--gap)}
 /* Feld = Mulde mit Papierförmchen: Boden, Ausschnitt auf Kreisform, gefältelter Rand */
-.cell{--f1:#fbf1df;--f2:#efdfc4;--k1:#f3e3c6;--k2:#d6bc93;position:relative;border-radius:24%;
+.cell{--f1:var(--cf1);--f2:var(--cf2);--k1:var(--ck1);--k2:var(--ck2);position:relative;border-radius:24%;
   background:radial-gradient(circle closest-side,var(--f1) 0 34%,var(--f2) 56%,transparent 58%),radial-gradient(circle closest-side,transparent 0 91%,rgba(0,0,0,.16) 93%,var(--box2) 95%),repeating-conic-gradient(var(--k1) 0 9deg,var(--k2) 9deg 18deg),var(--box2);
   box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.08)}
 .cell.hl{--f1:#fff3c4;--f2:#f6d98a;--k1:#f8dc8a;--k2:#e2b548}
@@ -100,6 +100,11 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 @keyframes bob{50%{transform:translateY(-3px)}}
 .slot.nofit .piece{opacity:.5;filter:grayscale(.85)}
 .slot.dragging .piece{opacity:0}
+/* passt erst nach dem Drehen: weniger grau, mit Dreh-Marke */
+.slot.nofit.rotfit .piece{opacity:.8;filter:grayscale(.35)}
+.slot.rotfit::after{content:"↻";position:absolute;right:4px;bottom:4px;width:24px;height:24px;border-radius:50%;background:var(--rose);color:#fff;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 #a8355a;animation:bmp .9s infinite;pointer-events:none}
+.slot.dragging::after{display:none}
+@media (max-height:660px){.hero{display:none}}
 .piece.spin{animation:spin .22s ease-out}
 @keyframes spin{from{transform:rotate(-90deg) scale(.8)}to{transform:none}}
 #drag{position:fixed;left:0;top:0;pointer-events:none;z-index:10;will-change:transform;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}
@@ -132,8 +137,8 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 .th.on{outline:3px solid var(--rose);outline-offset:2px}
 .th.lock{opacity:.4}
 .hero{display:flex;justify-content:center;align-items:flex-end;margin:-4px 0 4px}
-.hb{position:relative;width:54px;height:54px;margin:0 -3px}
-.hb:nth-child(1){transform:rotate(-12deg)}.hb:nth-child(2){width:70px;height:70px;z-index:1;animation:bob 2.6s ease-in-out infinite}.hb:nth-child(3){transform:rotate(12deg)}
+.hb{position:relative;width:46px;height:46px;margin:0 -3px}
+.hb:nth-child(1){transform:rotate(-12deg)}.hb:nth-child(2){width:60px;height:60px;z-index:1;animation:bob 2.6s ease-in-out infinite}.hb:nth-child(3){transform:rotate(12deg)}
 .prog{height:8px;border-radius:9px;background:var(--line);margin:8px 6px 2px;overflow:hidden}
 .prog i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--gold),var(--rose))}
 .ach{display:flex;align-items:center;gap:10px;text-align:left;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.25}
@@ -141,6 +146,21 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 .ach .st{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--line);color:#fff}
 .ach.on .st{background:linear-gradient(145deg,#f3c95a,#c99a3e);box-shadow:0 2px 0 rgba(0,0,0,.15)}
 .ach b{display:block;font-size:15px}.ach:not(.on){color:var(--mut)}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.mini .btn{font-size:14px;padding:11px 6px;margin-top:8px}
+.qs{background:#fff;border-radius:16px;box-shadow:inset 0 0 0 2px var(--line);padding:9px 12px 7px;margin-top:10px;text-align:left;font-size:14px;line-height:1.25}
+.qs h4{margin:0 0 3px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}
+.qs h4 b{color:var(--gold);font-size:13px;letter-spacing:0}
+.q{display:flex;justify-content:space-between;gap:8px;padding:3px 0}.q b{white-space:nowrap}.q.ok{color:var(--ok)}
+.dots{letter-spacing:3px;color:var(--gold)}
+.lbl{font-size:12px;color:var(--mut);font-weight:800}
+.over.full{background:var(--cream);align-items:flex-start;overflow:auto;z-index:50;touch-action:pan-y}
+.over.full .card{box-shadow:none;background:none;max-height:none;margin:auto;animation:none;padding:14px 8px}
+.gcard{background:var(--card);border-radius:18px;box-shadow:0 2px 0 var(--line);padding:12px 16px;margin-top:12px;text-align:left}
+.gcard ol,.gcard ul{margin:6px 0 2px;padding-left:22px;font-size:16px;line-height:1.45}.gcard li{margin:5px 0}
+.gcard svg{width:20px;height:20px;vertical-align:-4px;margin:0 2px}
+.skip{display:block;margin:16px auto 4px;font-size:15px;font-weight:800;color:var(--mut);text-decoration:underline;padding:10px}
+textarea{font:inherit;font-size:13px;width:100%;height:64px;border:2px solid var(--line);border-radius:12px;padding:8px;margin-top:8px;background:#fff;color:var(--ink);user-select:text;-webkit-user-select:text;touch-action:auto;resize:none}
 .demo{position:relative;display:inline-block;width:22px;height:22px;vertical-align:-5px;margin:0 2px}
 #upd{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--box);color:#fff;padding:11px 18px;border-radius:99px;font-weight:900;font-size:15px;box-shadow:0 4px 0 rgba(0,0,0,.3);z-index:40;white-space:nowrap}
 #upd[hidden],body.ingame #upd{display:none}
@@ -159,6 +179,7 @@ header{width:var(--bw);display:flex;justify-content:space-between;align-items:ce
 <div class="over" id="menu"><div class="card" id="menuCard"></div></div>
 <div class="over hidden" id="over"><div class="card" id="overCard"></div></div>
 <div class="over hidden" id="help"><div class="card" id="helpCard"></div></div>
+<div class="over full hidden" id="inst"><div class="card" id="instCard"></div></div>
 <button id="upd" type="button" hidden>Neue Version – tippen zum Aktualisieren</button>
 <script>
 (function(){
@@ -180,7 +201,7 @@ const cellEls=[];for(let i=0;i<N*N;i++){const d=document.createElement('div');d.
 
 // ===== Speicher =====
 function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
-const M=Object.assign({bestStage:1,theme:0,mute:false,seenHelp:false,games:0,daily:{d:'',best:0},streak:{d:'',n:0},ach:{}},ls('cs_meta')||{});
+const M=Object.assign({bestStage:1,theme:0,mute:false,seenHelp:false,games:0,daily:{d:'',best:0},streak:{d:'',n:0},ach:{},stars:0,cup:0,q:{d:'',p:{},got:[0,0,0],all:0},pt:true},ls('cs_meta')||{});
 let best=parseInt(ls('cs_best'))||0;
 function saveMeta(){ls('cs_meta',M)}
 function saveRun(){if(G&&!G.over)ls('cs_run_'+G.mode,G)}
@@ -193,14 +214,44 @@ function rankProg(){const nx=RANKS.find(r=>r[0]>M.bestStage);if(!nx)return'';con
 // Tagesserie: zählt Tage in Folge mit mindestens einem Zug in der Tagesschachtel
 function dayStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return dayStr(d)}
-function streakNow(){const s=M.streak;return s&&(s.d===today()||s.d===yesterday())?s.n:0}
-function bumpStreak(){const s=M.streak,d=today();if(s.d===d)return;s.n=s.d===yesterday()?s.n+1:1;s.d=d;saveMeta();
-  if(s.n>1&&FX)setTimeout(()=>toast('Serie: '+s.n+' Tage','sm'),700);if(s.n>=3)award('tag3');if(s.n>=7)award('tag7')}
+// Tagesrunde: jeder Tag mit der Tagesschachtel zählt weiter – ein verpasster Tag setzt nichts zurück.
+function roundPos(){const n=M.streak.n||0;return n?((n-1)%7)+1:0}
+function bumpStreak(){const s=M.streak,d=today();if(s.d===d)return;s.n=(s.n||0)+1;s.d=d;const p=roundPos();addStars(p===7?5:1);saveMeta();pt('round',{n:s.n});
+  if(FX)setTimeout(()=>toast(p===7?'Tagesrunde voll! +5 ★':'Tagesrunde: Tag '+p+' von 7 · +1 ★','sm'),700);if(s.n>=3)award('tag3');if(s.n>=7)award('tag7')}
+// Sterne (aus Tageszielen und Tagesrunde) schalten Förmchen frei – rein optisch
+const CUPS=[{n:'Creme',at:0,v:['#fbf1df','#efdfc4','#f3e3c6','#d6bc93']},{n:'Rosé',at:5,v:['#fff3f5','#fbd6de','#f9c6d2','#e497ad']},{n:'Mint',at:12,v:['#f3fbf1','#d5edd3','#cbe8cc','#94c79d']},
+  {n:'Himmel',at:25,v:['#f2f8fe','#d3e6f7','#c6def3','#8fb6dc']},{n:'Gold',at:45,v:['#fffae2','#f7e5a6','#f3d98a','#d0a63a']}];
+function addStars(n){const o=M.stars||0;M.stars=o+n;const c=CUPS.find(c=>c.at>o&&c.at<=M.stars);if(c&&FX)setTimeout(()=>toast('Neu: Förmchen „'+c.n+'“','sm'),2600)}
+// Tagesziele: drei pro Tag, für alle gleich (aus dem Datum abgeleitet); Fortschritt zählt über alle Partien des Tages
+const QPOOL=[['lines','Verpacke {n} Reihen',[20,30,40]],['pure','Verpacke {n}× sortenrein',[1,2,3]],['orders','Liefere {n} Bestellungen',[5,7,9]],['score','{n} Punkte in einer Partie',[1000,1500,2000]],
+  ['multi','{n}× zwei Reihen mit einem Zug',[2,3,4]],['games','Spiele {n} Partien zu Ende',[2,3]]];
+function quests(d){let h=parseInt(d.replace(/-/g,''))|0;const r=()=>{h=(Math.imul(h,1103515245)+12345)|0;return((h>>>8)&0xffff)/65536};r();r();const pool=QPOOL.slice(),out=[['tag','Spiele die Tagesschachtel',1]];
+  for(let k=0;k<2;k++){const q=pool.splice(Math.floor(r()*pool.length),1)[0],n=q[2][Math.floor(r()*q[2].length)];out.push([q[0],q[1].replace('{n}',n),n])}return out}
+function qs(){const d=today();if(!M.q||M.q.d!==d)M.q={d,p:{},got:[0,0,0],all:0};return M.q}
+function qTick(o){const q=qs(),p=q.p;Object.keys(o).forEach(k=>{if(o[k])p[k]=(p[k]||0)+o[k]});if(G&&G.score>(p.score||0))p.score=G.score;if(G&&G.mode==='tag')p.tag=1;
+  let ch=false;quests(q.d).forEach((x,i)=>{if(!q.got[i]&&(p[x[0]]||0)>=x[2]){q.got[i]=1;ch=true;addStars(1);pt('quest',{k:x[0]});if(FX)setTimeout(()=>{toast('Tagesziel geschafft · +1 ★','sm');sfx('win')},1250)}});
+  if(ch&&!q.all&&q.got.every(Boolean)){q.all=1;addStars(2);if(FX)setTimeout(()=>toast('Alle Tagesziele! +2 ★','sm'),2100)}saveMeta()}
+function questHtml(){const q=qs();return'<div class="qs"><h4><span>Tagesziele</span><b>★ '+(M.stars||0)+'</b></h4>'+quests(q.d).map((x,i)=>'<div class="q'+(q.got[i]?' ok':'')+'"><span>'+x[1]+'</span><b>'+(q.got[i]?'✓':Math.min(q.p[x[0]]||0,x[2])+' / '+x[2])+'</b></div>').join('')+'</div>'}
+// Testprotokoll: nur auf diesem Gerät, wird nie gesendet (Menü → Mehr)
+let PTL=ls('cs_playtest')||[],ptDirty=false;
+function pt(e,data){if(!M.pt||!FX)return;PTL.push(Object.assign({t:Date.now(),e},data));if(PTL.length>3000)PTL.splice(0,PTL.length-3000);ptDirty=true}
+function ptFlush(){if(ptDirty){ls('cs_playtest',PTL);ptDirty=false}}
+function ptExport(){ptFlush();const text=PTL.map(x=>JSON.stringify(x)).join('\n'),name='truffle-box-playtest-'+today()+'.jsonl';
+  try{const f=new File([text],name,{type:'text/plain'});if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f]}).catch(()=>{})}catch(e){}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=name;a.click()}
+function endRun(){pt('over',{mode:G.mode,score:G.score,stage:G.stage,moves:G.stats.moves,why:G.over,sec:G.ts?Math.round((Date.now()-G.ts)/1000):0});qTick({games:1});ptFlush()}
+// Spielstand als Code mitnehmen (Browser → installierte App; auf dem iPhone haben beide getrennte Speicher)
+const SAVE_KEYS=['cs_best','cs_meta','cs_run_saison','cs_run_tag'];
+function saveCode(){saveRun();const o={};SAVE_KEYS.forEach(k=>{try{const v=localStorage.getItem(k);if(v!=null)o[k]=v}catch(e){}});return'TB1.'+btoa(unescape(encodeURIComponent(JSON.stringify(o))))}
+function loadCode(c){try{c=String(c).trim();if(c.slice(0,4)!=='TB1.')return false;const o=JSON.parse(decodeURIComponent(escape(atob(c.slice(4)))));let n=0;
+  Object.keys(o).forEach(k=>{if(SAVE_KEYS.includes(k)){JSON.parse(o[k]);localStorage.setItem(k,o[k]);n++}});return n>0}catch(e){return false}}
+function copyText(t,done){const fb=()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){}ta.remove()};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fb);else fb()}
 // Auszeichnungen
 const ACH=[['erste','Erste Lieferung','Eine Bestellung ausliefern'],['rein','Sortenrein','Eine Reihe aus nur einer Sorte verpacken'],['drei','Himmlisch','Drei Reihen mit einem Zug verpacken'],
   ['leer','Blitzblank','Die Schachtel komplett leeren'],['eis','Eisretter','Fünf Eiskonfekt in einer Partie retten'],['serie5','Fließband','Fünf Züge in Folge eine Reihe verpacken'],
   ['p2000','Großauftrag','2000 Punkte in einer Partie'],['b6','Confiseur','Bestellung 6 erreichen'],['b12','Maître','Bestellung 12 erreichen'],
-  ['tag3','Stammkundschaft','Tagesschachtel an 3 Tagen in Folge'],['tag7','Treue Seele','Tagesschachtel an 7 Tagen in Folge']];
+  ['tag3','Stammkundschaft','Tagesschachtel an 3 Tagen spielen'],['tag7','Treue Seele','Tagesschachtel an 7 Tagen spielen']];
 function award(id){if(M.ach[id])return;M.ach[id]=1;saveMeta();if(!FX)return;const a=ACH.find(x=>x[0]===id);setTimeout(()=>{toast('★ '+a[1],'sm');sfx('win')},1700)}
 function checkAch(n,empty){const s=G.stats;if(s.orders>=1)award('erste');if(s.pure>=1)award('rein');if(n>=3)award('drei');if(empty)award('leer');if((s.saved||0)>=5)award('eis');
   if(G.streak>=5)award('serie5');if(G.score>=2000)award('p2000');if(G.stage>=6)award('b6');if(G.stage>=12)award('b12')}
@@ -245,8 +296,8 @@ function isDead(){const tr=G.tray.filter(Boolean),all=G.hold?tr.concat([G.hold])
 
 function startGame(mode){const d=today();
   G={mode,day:d,rs:mode==='tag'?(parseInt(d.replace(/-/g,''))*2654435761)|0:(Math.random()*2**32)|0,board:Array(N*N).fill(null),tray:[],hold:null,score:0,streak:0,stage:1,hearts:3,rot:3,order:null,
-    stats:{moves:0,lines:0,pure:0,orders:0,melted:0,saved:0},over:false};
-  newOrder();G.tray=newTray();M.games++;saveMeta();saveRun();enter()}
+    stats:{moves:0,lines:0,pure:0,orders:0,melted:0,saved:0},over:false,ts:Date.now()};
+  newOrder();G.tray=newTray();M.games++;saveMeta();saveRun();pt('start',{mode});enter()}
 function enter(){$('menu').classList.add('hidden');$('over').classList.add('hidden');document.body.classList.add('ingame');
   $('hint').style.opacity=G.stats.moves<4?1:0;$('hint').innerHTML='Teile in die Schachtel ziehen · <b>Antippen</b> dreht ein Teil (↻)';stuckShown=false;renderAll()}
 
@@ -274,21 +325,21 @@ function place(i,r,c){const pc=i===3?G.hold:G.tray[i],placed=new Set(),b=G.board
   if(G.order.goals.every(g=>g.have>=g.need)){const bonus=50+20*G.stage+5*G.order.left;pts+=bonus;G.stats.orders++;G.stage++;G.rot=Math.min(MAXROT,G.rot+1);
     if(G.stage%5===0&&G.hearts<3)G.hearts++;
     if(G.stage>M.bestStage){const old=M.bestStage;M.bestStage=G.stage;saveMeta();const th=THEMES.find(t=>t.at>old&&t.at<=G.stage);if(th&&FX)setTimeout(()=>toast('Neu: Schachtel „'+th.n+'“','sm'),1500)}
-    newOrder();newBlk=addBlockers();msgs.length=0;msgs.push(['Geliefert! +'+bonus]);msgs.push(['Bestellung '+G.stage+' · +1 ↻','sm']);conf=true;sfx('win')}
-  else if(G.order.left<=0){G.hearts--;msgs.push(['Bestellung geplatzt! −1 ♥','sm bad']);sfx('bad');shake();if(G.hearts>0)newOrder()}
-  setScore(G.score+pts,true);checkAch(n,empty);if(G.mode==='tag')bumpStreak();
+    pt('order',{ok:1,stage:G.stage-1,left:G.order.left});newOrder();newBlk=addBlockers();msgs.length=0;msgs.push(['Geliefert! +'+bonus]);msgs.push(['Bestellung '+G.stage+' · +1 ↻','sm']);conf=true;sfx('win')}
+  else if(G.order.left<=0){pt('order',{ok:0,stage:G.stage});G.hearts--;msgs.push(['Bestellung geplatzt! −1 ♥','sm bad']);sfx('bad');shake();if(G.hearts>0)newOrder()}
+  setScore(G.score+pts,true);checkAch(n,empty);if(G.mode==='tag')bumpStreak();qTick({lines:n,pure,orders:conf?1:0,multi:n>=2?1:0});
   if(G.tray.every(t=>!t))G.tray=newTray();
   if(G.hearts<=0)G.over='herz';else if(isDead())G.over='voll';
   if(G.stats.moves>=4)$('hint').style.opacity=0;
   renderBoard(cleared,placed,melted,newBlk);renderTray();renderOrder(gain);
   if(FX){cleared.forEach((v,k)=>burstCell(k,v));msgs.forEach(([t,cls],q)=>setTimeout(()=>toast(t,cls),q*260));if(conf)confetti()}
-  if(G.over){ls('cs_run_'+G.mode,null);setTimeout(showOver,FX?900:0)}else saveRun()}
-function toHold(i){const pc=G.tray[i];G.tray[i]=G.hold;G.hold=pc;sfx('pick');
+  if(G.over){ls('cs_run_'+G.mode,null);endRun();setTimeout(showOver,FX?900:0)}else saveRun()}
+function toHold(i){const pc=G.tray[i];G.tray[i]=G.hold;G.hold=pc;sfx('pick');pt('hold');
   if(G.tray.every(t=>!t))G.tray=newTray();
-  if(isDead()){G.over='voll';ls('cs_run_'+G.mode,null);setTimeout(showOver,700)}else saveRun();renderTray()}
+  if(isDead()){G.over='voll';ls('cs_run_'+G.mode,null);endRun();setTimeout(showOver,700)}else saveRun();renderTray()}
 function rotate(i){const pc=i===3?G.hold:G.tray[i];if(!pc)return;const r=rotated(pc);if(key(r)===key(pc))return;
   if(G.rot<=0){toast('Keine Drehung mehr','sm bad');return sfx('bad')}
-  G.rot--;if(i===3)G.hold=r;else G.tray[i]=r;sfx('pick');saveRun();renderTray();renderOrder();
+  G.rot--;if(i===3)G.hold=r;else G.tray[i]=r;sfx('pick');pt('rot');saveRun();renderTray();renderOrder();
   const el=slotEls[i].querySelector('.piece');if(el)el.classList.add('spin')}
 
 // ===== Darstellung =====
@@ -299,13 +350,13 @@ function renderBoard(cleared,placed,melted,newBlk){for(let i=0;i<N*N;i++){const 
   el.innerHTML=v?node(v,placed&&placed.has(i)?' place':(melted&&melted.has(i))||(newBlk&&newBlk.has(i))?' melt':''):cleared&&cleared.has(i)?node(cleared.get(i),' pop'):''}}
 function makePiece(pc,pitch,size){let h='<div class="piece" style="width:'+((pc.w-1)*pitch+size)+'px;height:'+((pc.h-1)*pitch+size)+'px">';
   pc.cells.forEach(([r,c],k)=>h+='<div style="left:'+c*pitch+'px;top:'+r*pitch+'px;width:'+size+'px;height:'+size+'px">'+node(k===pc.tm?{c:pc.c,t:TIMER}:{c:pc.c})+'</div>');return h+'</div>'}
-function renderTray(){const m=metrics(),sw=slotEls[0].getBoundingClientRect().width;slotEls.forEach((s,i)=>{const pc=i===3?G.hold:G.tray[i];s.classList.remove('nofit','dragging','tgt');
+function renderTray(){const m=metrics(),sw=slotEls[0].getBoundingClientRect().width;slotEls.forEach((s,i)=>{const pc=i===3?G.hold:G.tray[i];s.classList.remove('nofit','rotfit','dragging','tgt');
   const k=pc?Math.min(.7,sw*.94/(Math.max(pc.w,pc.h)*m.pitch)):0;   // kleine Teile größer zeigen, lange passen trotzdem in den Platz
-  s.innerHTML=pc?makePiece(pc,m.pitch*k,m.size*k):'';if(pc&&!canFit(pc))s.classList.add('nofit')});stuckHint()}
+  s.innerHTML=pc?makePiece(pc,m.pitch*k,m.size*k):'';if(pc&&!canFit(pc)){s.classList.add('nofit');if(G.rot>0&&!G.over&&canFitRot(pc))s.classList.add('rotfit')}});stuckHint()}
 // Passt kein Teil so, wie es liegt, sagt der Hinweis, was noch geht (drehen oder Ablage) – sonst wirkt das Spiel eingefroren.
 let stuckShown=false;
 function stuckHint(){const h=$('hint'),ps=G.tray.concat([G.hold]).filter(Boolean),st=!G.over&&ps.length>0&&!ps.some(canFit);
-  if(st){const rot=G.rot>0&&ps.some(canFitRot);h.innerHTML=rot?'Kein Teil passt so · ein graues Teil <b>antippen</b> dreht es (↻'+G.rot+')':'Kein Teil passt · das letzte Teil in die <b>Ablage</b> ziehen';h.style.opacity=1;stuckShown=true}
+  if(st){const rot=G.rot>0&&ps.some(canFitRot);h.innerHTML=rot?'Kein Teil passt so · ein Teil mit ↻ <b>antippen</b> dreht es (↻'+G.rot+')':'Kein Teil passt · das letzte Teil in die <b>Ablage</b> ziehen';h.style.opacity=1;if(!stuckShown)pt('stuck',{rot:G.rot,stage:G.stage});stuckShown=true}
   else if(stuckShown){h.style.opacity=0;stuckShown=false}}
 function renderOrder(gain){const o=G.order;$('hearts').innerHTML='♥'.repeat(Math.max(0,G.hearts))+'<i>'+'♥'.repeat(3-Math.max(0,G.hearts))+'</i>';
   $('goals').innerHTML=o.goals.map(g=>{const d=g.have>=g.need;return'<div class="gl'+(d?' done':'')+(gain&&gain[g.c]?' bump2':'')+'" title="'+NAMES[g.c]+'"><span class="ic">'+node({c:g.c})+'</span>'+(d?'✓':g.need-g.have)+'</div>'}).join('');
@@ -316,7 +367,8 @@ function setScore(v,bump){G.score=v;const e=$('score');e.textContent=v;
   else{if(v>best){best=v;ls('cs_best',best)}$('best').textContent='Bestwert '+best}
   if(bump&&FX){e.classList.add('bump');setTimeout(()=>e.classList.remove('bump'),150)}}
 function renderAll(){applyTheme();renderBoard();renderTray();renderOrder();setScore(G.score)}
-function applyTheme(){const t=THEMES[M.theme]||THEMES[0],s=document.documentElement.style;s.setProperty('--box',t.box);s.setProperty('--box2',t.box2);s.setProperty('--gold',t.gold)}
+function applyTheme(){const t=THEMES[M.theme]||THEMES[0],s=document.documentElement.style;s.setProperty('--box',t.box);s.setProperty('--box2',t.box2);s.setProperty('--gold',t.gold);
+  const c=(CUPS[M.cup]||CUPS[0]).v;['--cf1','--cf2','--ck1','--ck2'].forEach((k,i)=>s.setProperty(k,c[i]))}
 function toast(txt,cls){const t=document.createElement('div');t.className='toast '+(cls||'');t.textContent=txt;boxEl.appendChild(t);setTimeout(()=>t.remove(),1250)}
 function shake(){if(!FX)return;boxEl.classList.remove('shake');void boxEl.offsetWidth;boxEl.classList.add('shake')}
 function burst(x,y,col,n){for(let k=0;k<n;k++){const e=document.createElement('i');e.className='pt';e.style.background=col;e.style.left=x+'px';e.style.top=y+'px';
@@ -365,15 +417,60 @@ window.addEventListener('resize',()=>{if(G&&!drag)renderTray()});
 
 // ===== Menü & Dialoge =====
 function showMenu(){document.body.classList.remove('ingame');const run=savedRun('saison'),tag=savedRun('tag'),d=today(),db=M.daily.d===d?M.daily.best:0;
-  const sn=streakNow(),played=M.streak.d===d,got=ACH.filter(a=>M.ach[a[0]]).length;
+  const played=M.streak.d===d,pos=roundPos(),nextPos=played?pos:pos%7+1,got=ACH.filter(a=>M.ach[a[0]]).length,st=M.stars||0;
+  const dots='<span class="dots">'+'●'.repeat(played?pos:pos%7)+'○'.repeat(7-(played?pos:pos%7))+'</span>';
   $('menuCard').innerHTML='<div class="hero">'+[0,3,5].map(c=>'<span class="hb">'+node({c})+'</span>').join('')+'</div><div class="t">Truffle Box</div><div class="sub" style="margin-top:4px">A Chocolatier\'s Puzzle</div><div class="b" style="margin-top:6px">'+rankOf(M.bestStage)+' · Bestwert '+best+' · Bestellung '+M.bestStage+'</div>'+rankProg()+
    (run?'<button class="btn rose" data-a="cont">Weiterspielen<small>Bestellung '+run.stage+' · '+run.score+' Punkte</small></button>':'')+
    '<button class="btn'+(run?'':' rose')+'" data-a="new">Neue Saison</button>'+
-   '<button class="btn" data-a="tag">Tagesschachtel'+(sn>1?' · Serie '+sn+' Tage':'')+'<small>'+(sn&&!played&&!tag?'heute spielen, damit die Serie hält':tag?'fortsetzen · '+tag.score+' Punkte':db?'heute '+db+' Punkte – noch einmal':'jeden Tag dieselben Teile für alle')+'</small></button>'+
-   '<div class="themes">'+THEMES.map((t,i)=>{const ok=M.bestStage>=t.at;return'<button class="th'+(i===M.theme?' on':'')+(ok?'':' lock')+'" data-a="th" data-i="'+i+'" style="--t1:'+t.box+';--t2:'+t.box2+';--tg:'+t.gold+'" title="'+t.n+'">'+(ok?'':t.at)+'</button>'}).join('')+'</div>'+
-   '<div class="b" style="font-size:12px">Schachteln · neue ab Bestellung 4, 8, 12, 16</div>'+
-   '<button class="btn gh" data-a="ach">Auszeichnungen<small>'+got+' von '+ACH.length+'</small></button><button class="btn gh" data-a="help">So wird gespielt</button><button class="btn gh" data-a="mute">Ton: '+(M.mute?'aus':'an')+'</button>';
-  $('menu').classList.remove('hidden')}
+   '<button class="btn" data-a="tag">Tagesschachtel<small>'+(tag?'fortsetzen · '+tag.score+' Punkte':db?'heute '+db+' Punkte – noch einmal':played?'jeden Tag dieselben Teile für alle':'heute: Tag '+nextPos+' von 7 · '+(nextPos===7?'+5 ★':'+1 ★'))+'</small><small>'+dots+'</small></button>'+
+   questHtml()+
+   '<div class="mini"><button class="btn gh" data-a="ach">Auszeichnungen<small>'+got+' von '+ACH.length+'</small></button><button class="btn gh" data-a="help">Regeln<small>So wird gespielt</small></button>'+
+   '<button class="btn gh" data-a="look">Aussehen<small>Schachteln · Förmchen</small></button><button class="btn gh" data-a="more">Mehr<small>Ton · App · Spielstand</small></button></div>';
+  $('menu').classList.remove('hidden');$('menuCard').scrollTop=0}
+function showLook(){const st=M.stars||0;$('helpCard').innerHTML='<div class="t">Aussehen</div>'+
+   '<div class="gcard"><b>Schachteln</b><div class="lbl">neue ab Bestellung 4, 8, 12, 16 · erreicht: '+M.bestStage+'</div><div class="themes">'+THEMES.map((t,i)=>{const ok=M.bestStage>=t.at;return'<button class="th'+(i===M.theme?' on':'')+(ok?'':' lock')+'" data-a="th" data-i="'+i+'" style="--t1:'+t.box+';--t2:'+t.box2+';--tg:'+t.gold+'" title="'+t.n+'">'+(ok?'':t.at)+'</button>'}).join('')+'</div></div>'+
+   '<div class="gcard"><b>Förmchen</b><div class="lbl">für ★ aus Tageszielen und Tagesrunde · du hast ★ '+st+'</div><div class="themes">'+CUPS.map((c,i)=>{const ok=st>=c.at;return'<button class="th'+(i===(M.cup||0)?' on':'')+(ok?'':' lock')+'" data-a="cup" data-i="'+i+'" style="--t1:'+c.v[0]+';--t2:'+c.v[3]+';--tg:'+c.v[3]+';color:var(--ink);font-size:12px" title="'+c.n+'">'+(ok?'':'★'+c.at)+'</button>'}).join('')+'</div></div>'+
+   '<button class="btn rose" data-a="achok">Fertig</button>';$('help').classList.remove('hidden');$('helpCard').scrollTop=0}
+function showMore(msg){$('helpCard').innerHTML='<div class="t">Mehr</div>'+(msg?'<div class="b" style="color:var(--ok);margin-top:4px">'+msg+'</div>':'')+'<button class="btn gh" data-a="mute">Ton: '+(M.mute?'aus':'an')+'</button>'+
+   (standalone()?'':'<div class="gcard"><b>App installieren</b><p>Vollbild, offline und mit eigenem Symbol auf dem Startbildschirm.</p><button class="btn" data-a="inst">Anleitung zeigen</button></div>')+
+   '<div class="gcard"><b>Spielstand mitnehmen</b><p>Code auf dem alten Gerät oder im Browser kopieren und hier einfügen – etwa nach dem Installieren der App.</p><button class="btn gh" data-a="codecopy">Code kopieren</button>'+
+   '<textarea id="codeIn" placeholder="Code hier einfügen (beginnt mit TB1.)" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea><button class="btn gh" data-a="codeload">Spielstand laden</button></div>'+
+   '<div class="gcard"><b>Testprotokoll</b><p>Schreibt Spielereignisse (Partien, Bestellungen, Drehen, Hänger) nur auf diesem Gerät mit – nichts wird gesendet. Bisher '+PTL.length+' Einträge.</p>'+
+   '<button class="btn gh" data-a="pt">Testprotokoll: '+(M.pt?'an':'aus')+'</button><button class="btn gh" data-a="ptexp">Protokoll exportieren</button><button class="btn gh" data-a="ptclr">Protokoll leeren</button></div>'+
+   '<button class="btn rose" data-a="achok">Schließen</button>';
+  $('help').classList.remove('hidden');$('helpCard').scrollTop=0}
+// ===== Installationshinweis im Handy-Browser (Muster aus idlegame): Vollbild, passende Schritte, „Im Browser weiter“ gilt 6 Stunden =====
+const SHARE='<svg viewBox="0 0 24 24" aria-label="Teilen" role="img"><path d="M12 3v12M8 7l4-4 4 4M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let bip=null;
+function standalone(){return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}
+function platform(){const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),and=/Android/.test(ua);let b='other';
+  if(/Instagram|FBAN|FBAV|Line\/|Telegram|WhatsApp|TikTok|; wv\)/i.test(ua))b='inapp';
+  else if(ios)b=/CriOS/.test(ua)?'chrome':/FxiOS/.test(ua)?'firefox':/EdgiOS/.test(ua)?'edge':/Safari/.test(ua)?'safari':'other';
+  else if(and)b=/SamsungBrowser/.test(ua)?'samsung':/Firefox/.test(ua)?'firefox':/EdgA/.test(ua)?'edge':/OPR|Opera/.test(ua)?'opera':/Chrome/.test(ua)?'chrome':'other';
+  return{os:ios?'ios':and?'android':'desktop',b}}
+const STEPS={'ios-safari':['Tippe in der Leiste auf <b>Teilen</b> {S} (bei manchen Geräten erst auf ⋯)','Wähle <b>„Zum Home-Bildschirm“</b>','Tippe oben rechts auf <b>„Hinzufügen“</b>'],
+  'ios-chrome':['Tippe oben rechts neben der Adresse auf <b>Teilen</b> {S}','Wähle <b>„Zum Home-Bildschirm“</b>','Tippe auf <b>„Hinzufügen“</b>'],
+  'ios-other':['Öffne diese Seite in <b>Safari</b>','Tippe dort auf <b>Teilen</b> {S}','Wähle <b>„Zum Home-Bildschirm“</b>'],
+  'android-chrome':['Tippe oben rechts auf <b>⋮</b>','Wähle <b>„App installieren“</b> oder <b>„Zum Startbildschirm hinzufügen“</b>','Bestätige mit <b>„Installieren“</b>'],
+  'android-samsung':['Tippe unten rechts auf <b>☰</b>','Wähle <b>„Seite hinzufügen zu“</b>','Wähle <b>„Startbildschirm“</b>'],
+  'android-firefox':['Tippe auf <b>⋮</b>','Wähle <b>„Installieren“</b> bzw. <b>„Zum Startbildschirm hinzufügen“</b>','Bestätige'],
+  'android-other':['Öffne das Menü des Browsers','Wähle <b>„App installieren“</b> oder <b>„Zum Startbildschirm hinzufügen“</b>','Bestätige'],
+  inapp:['Diese Seite ist gerade in einer anderen App geöffnet (z. B. WhatsApp oder Instagram)','Öffne sie im Browser: Menü <b>⋯</b> → <b>„Im Browser öffnen“</b>','Installiere sie von dort']};
+const BN={safari:'Safari',chrome:'Chrome',firefox:'Firefox',edge:'Edge',samsung:'Samsung Internet',opera:'Opera',inapp:'In-App-Browser',other:'Browser'};
+function showGate(){const p=platform(),os=p.os==='desktop'?'android':p.os,key=p.b==='inapp'?'inapp':os==='ios'?(p.b==='safari'?'ios-safari':['chrome','firefox','edge'].includes(p.b)?'ios-chrome':'ios-other'):['edge','opera'].includes(p.b)?'android-chrome':STEPS['android-'+p.b]?'android-'+p.b:'android-other';
+  const prog=best>0||M.games>0;
+  $('instCard').innerHTML='<div class="hero"><span class="hb">'+node({c:0})+'</span><span class="hb">'+node({c:3})+'</span><span class="hb">'+node({c:5})+'</span></div><div class="t">Truffle Box als App</div><div class="sub" style="margin-top:4px">Zuerst installieren – dann spielt es sich am besten</div>'+
+   '<div class="gcard"><div class="lbl">Erkannt: '+(p.os==='ios'?'iPhone / iPad':p.os==='android'?'Android':'Computer')+' · '+BN[p.b]+'</div>'+
+   (bip?'<button class="btn rose" data-a="instnow">Jetzt installieren</button>':'')+'<ol>'+STEPS[key].map(x=>'<li>'+x.replace('{S}',SHARE)+'</li>').join('')+'</ol>'+
+   (p.b==='inapp'||key==='ios-other'?'<button class="btn gh" data-a="urlcopy">Adresse kopieren</button>':'')+'</div>'+
+   '<div class="gcard"><ul><li><b>Vollbild</b> – ohne Adressleiste, mehr Platz für die Schachtel</li><li><b>Offline</b> – läuft auch ohne Netz</li><li><b>Spielstand bleibt</b> – '+(p.os==='ios'?'Safari kann Spielstände von Webseiten nach längerer Pause löschen, die App behält sie':'Tagesrunde und Bestwerte gehen nicht verloren')+'</li></ul></div>'+
+   (prog&&p.os==='ios'?'<div class="gcard"><b>Schon gespielt?</b><p>Auf dem iPhone beginnt die App mit einem leeren Spielstand. Nimm deinen mit: Code kopieren, in der App unter <b>Menü → Mehr → Spielstand laden</b> einfügen.</p><button class="btn gh" data-a="codecopy">Spielstand-Code kopieren</button></div>':'')+
+   '<button class="skip" data-a="instskip">Im Browser weiterspielen</button><div class="lbl">Der Hinweis kommt in 6 Stunden wieder.</div>';
+  $('inst').classList.remove('hidden');$('inst').scrollTop=0;pt('gate',{a:'show',os:p.os,b:p.b})}
+function gateInit(){if(standalone())return;const forced=/[?&]installGate=1/.test(location.search);let at=0;try{at=+localStorage.getItem('cs_install_skip')||0}catch(e){}
+  if(forced||(platform().os!=='desktop'&&!navigator.webdriver&&Date.now()-at>6*36e5))showGate()}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();bip=e;if(!$('inst').classList.contains('hidden'))showGate()});
+window.addEventListener('appinstalled',()=>{bip=null;$('inst').classList.add('hidden');pt('gate',{a:'installed'})});
 function showHelp(){const ic=(v)=>'<span class="demo">'+node(v)+'</span>';
   $('helpCard').innerHTML='<div class="t">So wird gespielt</div>'+
    '<p><b>Verpacken:</b> Teile in die Schachtel ziehen. Volle Reihen und Spalten werden verpackt.</p>'+
@@ -389,21 +486,35 @@ function showHelp(){const ic=(v)=>'<span class="demo">'+node(v)+'</span>';
 function showAch(){$('helpCard').innerHTML='<div class="t">Auszeichnungen</div><div class="b" style="margin-bottom:6px">'+ACH.filter(a=>M.ach[a[0]]).length+' von '+ACH.length+'</div>'+
    ACH.map(a=>'<div class="ach'+(M.ach[a[0]]?' on':'')+'"><span class="st">★</span><span><b>'+a[1]+'</b>'+a[2]+'</span></div>').join('')+'<button class="btn rose" data-a="achok">Schließen</button>';
   $('help').classList.remove('hidden');$('helpCard').scrollTop=0}
-function shareText(){return'Truffle Box'+(G.mode==='tag'?' · Tagesschachtel '+G.day.split('-').reverse().join('.'):'')+': '+G.score+' Punkte, Bestellung '+G.stage+(G.mode==='tag'&&streakNow()>1?', Serie '+streakNow()+' Tage':'')+' – '+location.origin+location.pathname}
+function shareText(){return'Truffle Box'+(G.mode==='tag'?' · Tagesschachtel '+G.day.split('-').reverse().join('.'):'')+': '+G.score+' Punkte, Bestellung '+G.stage+''+' – '+location.origin+location.pathname}
 function showOver(){document.body.classList.remove('ingame');const s=G.stats,tag=G.mode==='tag',top=tag?M.daily.best:best;
   $('overCard').innerHTML='<div class="sub">'+(tag?'Tagesschachtel':'Saison')+'</div><div class="t">'+(G.over==='herz'?'Kundschaft verärgert!':'Schachtel voll!')+'</div>'+
    '<div class="s">'+G.score+'</div><div class="b">'+(G.score>=top&&G.score>0?'Neuer '+(tag?'Tagesbestwert':'Bestwert')+'!':(tag?'Tagesbestwert ':'Bestwert ')+top)+'</div>'+
-   '<div class="rows"><div><span>Erreicht</span><b>Bestellung '+G.stage+'</b></div><div><span>Rang</span><b>'+rankOf(M.bestStage)+'</b></div><div><span>Geliefert</span><b>'+s.orders+'</b></div>'+
-   '<div><span>Reihen verpackt</span><b>'+s.lines+'</b></div><div><span>davon sortenrein</span><b>'+s.pure+'</b></div><div><span>Züge</span><b>'+s.moves+'</b></div></div>'+
-   rankProg()+(tag&&streakNow()>1?'<div class="b" style="margin-top:6px">Serie: '+streakNow()+' Tage – morgen wartet die nächste Tagesschachtel</div>':'')+
-   '<button class="btn rose" data-a="again">Neue Schachtel</button><button class="btn" data-a="share">Ergebnis teilen</button><button class="btn gh" data-a="menu">Menü</button>';
-  $('over').classList.remove('hidden')}
+   (G.score<top&&G.score>=top*.75?'<div class="b" style="color:var(--rose);margin-top:6px">Nur '+(top-G.score)+' Punkte bis zum '+(tag?'Tagesbestwert':'Bestwert')+' – noch eine?</div>':'')+
+   '<button class="btn rose" data-a="again">Neue Schachtel</button>'+
+   '<div class="rows"><div><span>Erreicht</span><b>Bestellung '+G.stage+' · '+s.orders+' geliefert</b></div><div><span>Reihen verpackt</span><b>'+s.lines+(s.pure?' · '+s.pure+' sortenrein':'')+'</b></div><div><span>Rang</span><b>'+rankOf(M.bestStage)+'</b></div></div>'+
+   rankProg()+questHtml()+(tag?'<div class="lbl" style="margin-top:8px">Tagesrunde: Tag '+roundPos()+' von 7 · morgen wartet die nächste Tagesschachtel</div>':'')+
+   '<div class="mini"><button class="btn gh" data-a="share">Ergebnis teilen</button><button class="btn gh" data-a="menu">Menü</button></div>';
+  $('over').classList.remove('hidden');$('overCard').scrollTop=0}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;const k=a.dataset.a;ac();
   if(k==='cont'){G=savedRun('saison');enter()}
   else if(k==='new'){if(savedRun('saison')&&!a.dataset.sure){a.dataset.sure=1;a.innerHTML='Wirklich neu beginnen?<small>Die laufende Saison geht verloren</small>';return}startGame('saison');firstHelp()}
   else if(k==='tag'){const r=savedRun('tag');if(r){G=r;enter()}else startGame('tag');firstHelp()}
-  else if(k==='th'){const i=+a.dataset.i;if(M.bestStage<THEMES[i].at)return;M.theme=i;saveMeta();applyTheme();showMenu()}
-  else if(k==='mute'){M.mute=!M.mute;saveMeta();showMenu()}
+  else if(k==='th'){const i=+a.dataset.i;if(M.bestStage<THEMES[i].at)return;M.theme=i;saveMeta();applyTheme();showLook()}
+  else if(k==='mute'){M.mute=!M.mute;saveMeta();showMore()}
+  else if(k==='look')showLook();
+  else if(k==='cup'){const i=+a.dataset.i;if((M.stars||0)<CUPS[i].at)return;M.cup=i;saveMeta();applyTheme();showLook()}
+  else if(k==='more')showMore();
+  else if(k==='inst'){$('help').classList.add('hidden');showGate()}
+  else if(k==='instskip'){try{localStorage.setItem('cs_install_skip',String(Date.now()))}catch(e){}$('inst').classList.add('hidden');pt('gate',{a:'skip'})}
+  else if(k==='instnow'){if(bip){const ev=bip;bip=null;ev.prompt();ev.userChoice.then(r=>{pt('gate',{a:r.outcome});if(r.outcome==='accepted')$('inst').classList.add('hidden');else showGate()}).catch(()=>{})}}
+  else if(k==='urlcopy')copyText(location.origin+location.pathname,()=>{a.textContent='Adresse kopiert ✓'});
+  else if(k==='codecopy')copyText(saveCode(),()=>{a.textContent='Code kopiert ✓'});
+  else if(k==='codeload'){const v=$('codeIn').value;if(!v.trim())return;if(!a.dataset.sure){a.dataset.sure=1;a.innerHTML='Wirklich laden?<small>Ersetzt den Spielstand auf diesem Gerät</small>';return}
+    if(loadCode(v))location.reload();else{a.removeAttribute('data-sure');a.innerHTML='Code ungültig<small>Bitte vollständig einfügen</small>'}}
+  else if(k==='pt'){M.pt=!M.pt;saveMeta();showMore()}
+  else if(k==='ptexp')ptExport();
+  else if(k==='ptclr'){PTL=[];ptDirty=true;ptFlush();showMore('Protokoll geleert')}
   else if(k==='help')showHelp();
   else if(k==='ach')showAch();
   else if(k==='achok')$('help').classList.add('hidden');
@@ -415,7 +526,9 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a
   else if(k==='menu'){$('over').classList.add('hidden');showMenu()}});
 function firstHelp(){if(!M.seenHelp)showHelp()}
 $('menuBtn').addEventListener('click',()=>{if(drag)return;saveRun();showMenu()});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)saveRun()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){saveRun();ptFlush()}});
+setInterval(ptFlush,15000);
+window.addEventListener('error',e=>pt('err',{m:String(e.message).slice(0,160),l:e.lineno}));
 
 // Für Tests und tools/balance.cjs
 window.__cs={get G(){return G},set fx(v){FX=v},P,place,toHold,rotate,fits,canFit,fullLines,isPure,startGame,metrics,M};
@@ -428,7 +541,9 @@ window.__cs={get G(){return G},set fx(v){FX=v},P,place,toHold,rotate,fits,canFit
 applyTheme();
 // Hintergrund hinter dem Menü: letzte Partie oder eine leere Schachtel
 G=savedRun('saison')||{mode:'saison',board:Array(N*N).fill(null),tray:[],hold:null,score:0,stage:1,hearts:3,rot:3,order:{cust:0,goals:[],left:0},stats:{moves:0},over:'x'};
-renderAll();showMenu();
+renderAll();showMenu();gateInit();
+(function(){const p=platform(),o={os:p.os,b:p.b,sa:standalone()?1:0,w:innerWidth,h:innerHeight,games:M.games,best:M.bestStage};
+  const go=v=>pt('session',Object.assign(o,{v}));try{caches.keys().then(k=>go((k.find(x=>x.indexOf('confiserie-')===0)||'').slice(11)),()=>go(''))}catch(e){go('')}})();
 
 // ===== Service Worker (nur https bzw. localhost) =====
 if('serviceWorker' in navigator&&(location.protocol==='https:'||['localhost','127.0.0.1','[::1]'].includes(location.hostname))){
