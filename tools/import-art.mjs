@@ -13,7 +13,7 @@
 // Zwei Motive werden fürs Spiel angepasst (ADJUST unten; zum Abschalten den Eintrag entfernen):
 // - pistachio: Die Schokolade wird grün eingefärbt. Im Spiel ist die Sorte über die Farbe erkennbar,
 //   und ein brauner Kern wäre neben Zartbitter, Nougat und Krokant die vierte braune Praline.
-// - coconut: bekommt eine kräftige dunkle Kontur – die helle Kugel verschwindet sonst auf dem hellen Papierförmchen.
+// - coconut: wird zum Rand hin abgedunkelt und bekommt eine breite dunkle Kontur – die helle Kugel verschwindet sonst auf dem hellen Papierförmchen.
 // - frost: Der Ring wird nach außen gestaucht (größeres Loch) und kreisrund gemacht, damit darunter
 //   die Sorte und in der Mitte die Zahl sichtbar bleiben; Magenta-Reste an der Innenkante entfallen.
 import sharp from 'sharp';
@@ -52,7 +52,11 @@ function outline(data, w, h, px, col) { const a = Buffer.alloc(w * h); for (let 
     for (let c = 0; c < 3; c++) out[i * 4 + c] = Math.round(data[i * 4 + c] * al + col[c] * (1 - al)); out[i * 4 + 3] = Math.round(255 * Math.max(al, k)); }
   return out; }
 const ADJUST = {
-  coconut: (data, w, h) => outline(data, w, h, 9, [0x4a, 0x34, 0x18]),
+  // Kokos: zum Rand hin abdunkeln (gibt der hellen Kugel Volumen) und eine breite dunkle Kontur darum
+  async coconut(data, w, h) { const a = Buffer.alloc(w * h); for (let i = 0; i < w * h; i++) a[i] = data[i * 4 + 3] > 128 ? 255 : 0;
+    const soft = await sharp(a, { raw: { width: w, height: h, channels: 1 } }).blur(16).extractChannel(0).raw().toBuffer();
+    for (let i = 0; i < w * h; i++) { if (!a[i]) continue; const k = .62 + .38 * Math.max(0, Math.min(1, (soft[i] / 255 - .5) * 2.2)); for (let c = 0; c < 3; c++) data[i * 4 + c] = Math.round(data[i * 4 + c] * k); }
+    return outline(data, w, h, 20, [0x33, 0x1f, 0x0b]); },
   // Braun (Farbton 0–45°) -> Pistaziengrün; gelbgrüne Krümel und weiße Glanzlichter bleiben
   pistachio(data, w, h) { for (let i = 0; i < w * h; i++) { if (!data[i * 4 + 3]) continue; const [hh, ss, vv] = rgb2hsv(data[i * 4], data[i * 4 + 1], data[i * 4 + 2]);
     if (hh > 48 && hh < 330) continue; const [r, g, b] = hsv2rgb(96, Math.min(1, ss * .8), Math.min(1, vv * 1.45 + .07)); data[i * 4] = r; data[i * 4 + 1] = g; data[i * 4 + 2] = b; } return data; },
@@ -81,7 +85,7 @@ for (const name of NAMES) {
       if (pass === 2 || keyish(data[i * 4], data[i * 4 + 1], data[i * 4 + 2])) add.push(i); }
     add.forEach((i) => bg[i] = 1); }
   let kept = 0; for (let i = 0; i < w * h; i++) { if (bg[i]) data[i * 4 + 3] = 0; else kept++; }
-  if (ADJUST[name]) { const d2 = ADJUST[name](data, w, h); if (d2 !== data) d2.copy(data); }
+  if (ADJUST[name]) { const d2 = await ADJUST[name](data, w, h); if (d2 !== data) d2.copy(data); }
   // Kante weichzeichnen: nur der Alphakanal, leicht
   const alpha = Buffer.alloc(w * h); for (let i = 0; i < w * h; i++) alpha[i] = data[i * 4 + 3];
   const soft = await sharp(alpha, { raw: { width: w, height: h, channels: 1 } }).blur(.8).extractChannel(0).raw().toBuffer();
