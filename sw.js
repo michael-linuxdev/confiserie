@@ -21,7 +21,7 @@ const ASSETS = [
   'icons/favicon.png',
   'sprites/truffle-dark.webp',
   'sprites/nougat.webp',
-  'sprites/coconut.webp',
+  'sprites/cassis.webp',
   'sprites/raspberry.webp',
   'sprites/pistachio.webp',
   'sprites/caramel.webp',

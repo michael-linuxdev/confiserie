@@ -64,7 +64,7 @@ header{margin-top:auto;width:var(--bw);display:flex;justify-content:space-betwee
 .prl,.blk{position:absolute;inset:2%;background:center/contain no-repeat;--sh:drop-shadow(0 0 1px rgba(40,20,10,.7)) drop-shadow(0 2px 2px rgba(40,20,10,.45));filter:var(--sh)}
 .p0{background-image:url(sprites/truffle-dark.webp)}
 .p1{background-image:url(sprites/nougat.webp)}
-.p2{background-image:url(sprites/coconut.webp)}
+.p2{background-image:url(sprites/cassis.webp)}
 .p3{background-image:url(sprites/raspberry.webp)}
 .p4{background-image:url(sprites/pistachio.webp)}
 .p5{background-image:url(sprites/caramel.webp)}
@@ -203,7 +203,7 @@ const RAW=["X","XX","X\nX","XXX","X\nX\nX","XXXX","X\nX\nX\nX","XXXXX","X\nX\nX\
 const SHAPES=RAW.map(s=>{const rows=s.split("\n"),cells=[];rows.forEach((row,r)=>[...row].forEach((ch,c)=>{if(ch==="X")cells.push([r,c])}));return{cells,h:rows.length,w:Math.max(...rows.map(x=>x.length))}});
 // Teile-Stufen: leicht, mittel, sperrig
 const TIER=[[0,1,2,3,4,9,11,12,13,14],[5,6,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],[7,8,10,31,32,33,34]];
-const NAMES=['Zartbitter','Nougat','Kokos','Himbeer','Pistazie','Karamell'];
+const NAMES=['Zartbitter','Nougat','Cassis','Himbeer','Pistazie','Karamell'];
 const CUST=['Herr Brandt','Frau Petersen','Jonas vom Kutter','Familie Ahrens','Pastor Lüders','Frau Kowalski','Hanne vom Kiosk','Die Hafenmeisterin','Kapitän Thomsen','Oma Gesine'];
 const RANKS=[[1,'Küchenhilfe'],[3,'Lehrling'],[6,'Confiseur'],[9,'Chocolatier'],[12,'Maître Chocolatier'],[16,'Grand Maître'],[20,'Legende von Möwenhafen']];
 const THEMES=[{n:'Klassik',at:1,box:'#6b4430',box2:'#553323',gold:'#c99a3e'},{n:'Rosé',at:4,box:'#b05f77',box2:'#823c52',gold:'#f6d3ae'},{n:'Pistazie',at:8,box:'#62804a',box2:'#425c30',gold:'#e6d58f'},{n:'Mitternacht',at:12,box:'#333a62',box2:'#1e2244',gold:'#dab85e'},{n:'Gold',at:16,box:'#bd8b30',box2:'#8c621b',gold:'#fff2c9'}];
@@ -403,7 +403,7 @@ function toast(txt,cls){const t=document.createElement('div');t.className='toast
 function shake(){if(!FX)return;boxEl.classList.remove('shake');void boxEl.offsetWidth;boxEl.classList.add('shake')}
 function burst(x,y,col,n){for(let k=0;k<n;k++){const e=document.createElement('i');e.className='pt';e.style.background=col;e.style.left=x+'px';e.style.top=y+'px';
   const a=Math.random()*Math.PI*2,v=30+Math.random()*80;e.style.setProperty('--dx',Math.cos(a)*v+'px');e.style.setProperty('--dy',(Math.sin(a)*v-30)+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),850)}}
-const PCOL=['#562d20','#a05a2c','#ead7ae','#e8408a','#7fb43f','#e08a1f'];   // Hauptfarben der Sprites
+const PCOL=['#562d20','#a05a2c','#7b3fb3','#e8408a','#7fb43f','#e08a1f'];   // Hauptfarben der Sprites
 function burstCell(k,v){const r=cellEls[k].getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,v.b?'#6a3418':PCOL[v.c],3)}
 function confetti(){for(let k=0;k<40;k++)setTimeout(()=>burst(innerWidth*Math.random(),innerHeight*.35*Math.random(),PCOL[(k%4)+2],1),k*14)}
 function buzz(ms){if(!FX)return;try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}

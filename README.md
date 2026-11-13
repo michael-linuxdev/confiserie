@@ -99,13 +99,13 @@ node tools/make-sprites.mjs   # art/source/*.png  -> sprites/*.webp
 node tools/make-icons.mjs     # art/source/icon.png -> icons/*.png
 ```
 
-Die Pralinen sind gemalte Bilder aus einem Bildgenerator (Prompts in `art/PROMPTS.md`), geliefert auf Magenta-Hintergrund. `import-art.mjs` entfernt den Hintergrund von außen her (zusammenhängende Fläche, kein Farbschlüssel – Rosa im Motiv bleibt) und passt drei Motive fürs Spiel an: Die Pistazie wird grün eingefärbt (sonst wäre sie die vierte braune Praline), die Kokoskugel bekommt eine dunkle Kontur (sonst verschwindet sie auf dem hellen Papier), und der Frostring wird aufgeweitet, damit Sorte und Zahl sichtbar bleiben. `tools/make-art.mjs` zeichnet weiterhin die frühere Vektor-Fassung, überschreibt dabei aber `art/source/`.
+Die Pralinen sind gemalte Bilder aus einem Bildgenerator (Prompts in `art/PROMPTS.md`), geliefert auf Magenta-Hintergrund. `import-art.mjs` entfernt den Hintergrund von außen her (zusammenhängende Fläche, kein Farbschlüssel – Rosa im Motiv bleibt) und passt zwei Motive fürs Spiel an: Die Pistazie wird grün eingefärbt (sonst wäre sie die vierte braune Praline), und der Frostring wird aufgeweitet, damit Sorte und Zahl sichtbar bleiben. Die frühere Sorte Kokos wurde durch Cassis ersetzt, weil Weiß auf dem hellen Papierförmchen nie gut zu lesen war. `tools/make-art.mjs` zeichnet weiterhin die frühere Vektor-Fassung, überschreibt dabei aber `art/source/`.
 
 Quellbilder in `art/source/` (PNG, quadratisch, mind. 1024 px, transparenter Hintergrund – außer `icon.png`):
 
 | Datei | Verwendung |
 | --- | --- |
-| `truffle-dark.png`, `nougat.png`, `coconut.png`, `raspberry.png`, `pistachio.png`, `caramel.png` | Sorten 0–5 (Zartbitter, Nougat, Kokos, Himbeer, Pistazie, Karamell) |
+| `truffle-dark.png`, `nougat.png`, `cassis.png`, `raspberry.png`, `pistachio.png`, `caramel.png` | Sorten 0–5 (Zartbitter, Nougat, Cassis, Himbeer, Pistazie, Karamell) |
 | `brittle.png`, `brittle-gold.png` | Krokant, Krokant mit Goldrand |
 | `frost.png` | Frostring, liegt beim Eiskonfekt über der Sorte |
 | `icon.png` | App-Icon, deckend auf `#fbeee6` |

@@ -3,9 +3,9 @@
 //
 //   node tools/import-art.mjs <ordner-mit-rohbildern>
 //
-// Erwartet die zehn Dateinamen aus art/PROMPTS.md. Die Sprites dürfen auf einfarbigem Magenta
-// gemalt sein (auch nur als Rechteck in einem sonst transparenten Bild): Von außen her wird alles
-// entfernt, was transparent oder magenta ist – eine Füllung über zusammenhängende Flächen, kein
+// Erwartet die zehn Dateinamen aus art/PROMPTS.md. Die Sprites dürfen auf einfarbigem Magenta oder
+// Grün gemalt sein (auch nur als Rechteck in einem sonst transparenten Bild): Von außen her wird alles
+// entfernt, was transparent oder Hintergrundfarbe ist – eine Füllung über zusammenhängende Flächen, kein
 // Farbschlüssel. Rosa im Motiv bleibt deshalb erhalten, solange eine Kontur es vom Hintergrund trennt.
 // Danach wird der Rand um einen Pixel zurückgenommen und Magenta-Schimmer an der Kante entfernt.
 // icon.png bleibt deckend; sein heller Hintergrund wird auf #fbeee6 gesetzt.
@@ -13,7 +13,6 @@
 // Zwei Motive werden fürs Spiel angepasst (ADJUST unten; zum Abschalten den Eintrag entfernen):
 // - pistachio: Die Schokolade wird grün eingefärbt. Im Spiel ist die Sorte über die Farbe erkennbar,
 //   und ein brauner Kern wäre neben Zartbitter, Nougat und Krokant die vierte braune Praline.
-// - coconut: wird zum Rand hin abgedunkelt und bekommt eine breite dunkle Kontur – die helle Kugel verschwindet sonst auf dem hellen Papierförmchen.
 // - frost: Der Ring wird nach außen gestaucht (größeres Loch) und kreisrund gemacht, damit darunter
 //   die Sorte und in der Mitte die Zahl sichtbar bleiben; Magenta-Reste an der Innenkante entfallen.
 import sharp from 'sharp';
@@ -24,13 +23,17 @@ import { fileURLToPath } from 'node:url';
 const IN = process.argv[2];
 const OUT = process.argv[3] || join(dirname(fileURLToPath(import.meta.url)), '..', 'art', 'source');
 if (!IN) { console.error('Aufruf: node tools/import-art.mjs <ordner-mit-rohbildern>'); process.exit(1); }
-const NAMES = ['truffle-dark', 'nougat', 'coconut', 'raspberry', 'pistachio', 'caramel', 'brittle', 'brittle-gold', 'frost'];
+const NAMES = ['truffle-dark', 'nougat', 'cassis', 'raspberry', 'pistachio', 'caramel', 'brittle', 'brittle-gold', 'frost'];
 const BG = [0xfb, 0xee, 0xe6];
 mkdirSync(OUT, { recursive: true });
 
 // Magenta: viel Rot, kaum Grün, deutlich Blau
-const isKey = (r, g, b) => r > 150 && g < r * .38 && b > r * .38 && b < r * 1.15;
-const keyish = (r, g, b) => r > 110 && g < r * .55 && b > r * .45 && b > g * 1.5;   // Mischpixel an der Kante
+const KEYS = {
+  magenta: { is: (r, g, b) => r > 150 && g < r * .38 && b > r * .38 && b < r * 1.15, ish: (r, g, b) => r > 110 && g < r * .55 && b > r * .45 && b > g * 1.5 },
+  // Grün für Motive, die selbst rosa/violett sind (z. B. Cassis)
+  green: { is: (r, g, b) => g > 140 && r < g * .55 && b < g * .55, ish: (r, g, b) => g > 70 && g > r * 1.25 && g > b * 1.25 },
+};
+let isKey = KEYS.magenta.is, keyish = KEYS.magenta.ish;   // Mischpixel an der Kante: „ish“
 
 function flood(w, h, start, pass) {
   const seen = new Uint8Array(w * h), stack = [];
@@ -52,11 +55,6 @@ function outline(data, w, h, px, col) { const a = Buffer.alloc(w * h); for (let 
     for (let c = 0; c < 3; c++) out[i * 4 + c] = Math.round(data[i * 4 + c] * al + col[c] * (1 - al)); out[i * 4 + 3] = Math.round(255 * Math.max(al, k)); }
   return out; }
 const ADJUST = {
-  // Kokos: zum Rand hin abdunkeln (gibt der hellen Kugel Volumen) und eine breite dunkle Kontur darum
-  async coconut(data, w, h) { const a = Buffer.alloc(w * h); for (let i = 0; i < w * h; i++) a[i] = data[i * 4 + 3] > 128 ? 255 : 0;
-    const soft = await sharp(a, { raw: { width: w, height: h, channels: 1 } }).blur(16).extractChannel(0).raw().toBuffer();
-    for (let i = 0; i < w * h; i++) { if (!a[i]) continue; const k = .62 + .38 * Math.max(0, Math.min(1, (soft[i] / 255 - .5) * 2.2)); for (let c = 0; c < 3; c++) data[i * 4 + c] = Math.round(data[i * 4 + c] * k); }
-    return outline(data, w, h, 20, [0x33, 0x1f, 0x0b]); },
   // Braun (Farbton 0–45°) -> Pistaziengrün; gelbgrüne Krümel und weiße Glanzlichter bleiben
   pistachio(data, w, h) { for (let i = 0; i < w * h; i++) { if (!data[i * 4 + 3]) continue; const [hh, ss, vv] = rgb2hsv(data[i * 4], data[i * 4 + 1], data[i * 4 + 2]);
     if (hh > 48 && hh < 330) continue; const [r, g, b] = hsv2rgb(96, Math.min(1, ss * .8), Math.min(1, vv * 1.45 + .07)); data[i * 4] = r; data[i * 4 + 1] = g; data[i * 4 + 2] = b; } return data; },
@@ -77,6 +75,8 @@ const ADJUST = {
 for (const name of NAMES) {
   const file = join(IN, name + '.png'); if (!existsSync(file)) { console.error(`FEHLT: ${name}.png`); process.exitCode = 1; continue; }
   const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true }); const w = info.width, h = info.height;
+  // Hintergrundfarbe an der Bildecke erkennen: grün oder (Standard) magenta
+  const key = data[3] > 200 && KEYS.green.is(data[0], data[1], data[2]) ? KEYS.green : KEYS.magenta; isKey = key.is; keyish = key.ish;
   const bg = flood(w, h, border(w, h), (i) => data[i * 4 + 3] < 40 || isKey(data[i * 4], data[i * 4 + 1], data[i * 4 + 2]));
   // Kante: Magenta-Mischpixel am Rand zum Hintergrund dazunehmen (zwei Durchgänge), dann 1 px zurücknehmen
   for (let pass = 0; pass < 3; pass++) { const add = [];

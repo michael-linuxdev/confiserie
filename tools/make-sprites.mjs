@@ -30,7 +30,7 @@ const MAX_TOTAL = 350 * 1024;
 
 // fit 'area': gleiche deckende Fläche wie die anderen · 'frame': füllt das Feld (Overlay)
 const SPRITES = [
-  ['truffle-dark', 'area'], ['nougat', 'area'], ['coconut', 'area'], ['raspberry', 'area'],
+  ['truffle-dark', 'area'], ['nougat', 'area'], ['cassis', 'area'], ['raspberry', 'area'],
   ['pistachio', 'area'], ['caramel', 'area'], ['brittle', 'area'], ['brittle-gold', 'area'],
   ['frost', 'frame'],
 ];

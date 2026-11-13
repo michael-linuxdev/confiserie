@@ -19,7 +19,7 @@ const TEXT = [['Fließtext', v('ink'), v('card')], ['Nebentext (Hinweis, Etikett
 console.log('Text'); console.table(TEXT.map(([n, f, b]) => ({ was: n, farbe: f, auf: b, kontrast: +ratio(f, b).toFixed(2), ok: ratio(f, b) >= 4.5 ? 'ja' : 'NEIN' })));
 
 const cups = [...html.matchAll(/\{n:'([^']+)',at:\d+,v:\[([^\]]+)\]\}/g)].map((m) => ({ n: m[1], v: m[2].replace(/'/g, '').split(',') }));
-const NAMES = ['truffle-dark', 'nougat', 'coconut', 'raspberry', 'pistachio', 'caramel', 'brittle', 'brittle-gold'];
+const NAMES = ['truffle-dark', 'nougat', 'cassis', 'raspberry', 'pistachio', 'caramel', 'brittle', 'brittle-gold'];
 (async () => {
   const rows = [];
   for (const n of NAMES) {

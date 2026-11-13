@@ -32,7 +32,7 @@ no cast shadow, centered, fills about 80% of the frame, transparent background, 
 | --- | --- |
 | `truffle-dark.png` | Round dark chocolate truffle dome with fine light-brown cocoa drizzle lines across the top. |
 | `nougat.png` | Square milk-chocolate nougat praline with rounded corners and one whole hazelnut on top. |
-| `coconut.png` | White chocolate ball densely coated in coconut flakes, clearly outlined so it reads on a cream background. |
+| `cassis.png` | Flower-shaped blackcurrant praline, a rosette with six rounded petals, deep violet-purple glossy glaze, one dark berry in the centre, dark chocolate base visible at the edge. Auf grünem Hintergrund (#00ff00) malen lassen – Violett franst auf Magenta aus. |
 | `raspberry.png` | Heart-shaped raspberry praline with shiny pink glaze and a bright highlight. |
 | `pistachio.png` | Leaf-shaped green pistachio praline with a centre vein and chopped pistachio crumbs. |
 | `caramel.png` | Hexagonal golden caramel praline with white sea salt flakes on top. |
@@ -54,7 +54,7 @@ no text, centered with generous margin, flat plain cream background #fbeee6, ful
 
 - Jede Sorte muss an **Form und Farbe** sofort erkennbar sein; im Spiel sind die Bilder 25–45 px groß.
 - Karamell (golden, Sechseck) und Krokant (dunkler, gezackt) dürfen sich nicht ähneln.
-- Kokos braucht eine dunkle Kontur, sonst verschwindet es auf dem hellen Papierförmchen
+- Helle Motive (Weiß, Creme) vermeiden: Sie verschwinden auf dem hellen Papierförmchen
   (`tools/contrast.cjs` misst das: „Rand“ sollte über 20 liegen).
 - Kein Schatten unter der Praline, nichts abgeschnitten, kein Text, kein Teller.
 - Der Frostring muss in der Mitte leer sein – dort stehen Sorte und Zahl.
